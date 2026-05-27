@@ -1,0 +1,67 @@
+[
+  {
+    "id": "implant_001",
+    "ja": "インプラント",
+    "en": "dental implant",
+    "zh": "牙种植体",
+    "category": "implant",
+    "risk": false,
+    "note": "文脈によりimplantでも可"
+  },
+  {
+    "id": "implant_002",
+    "ja": "インプラント埋入",
+    "en": "implant placement",
+    "zh": "种植体植入",
+    "category": "surgery",
+    "risk": false
+  },
+  {
+    "id": "anatomy_001",
+    "ja": "上顎",
+    "en": "maxilla",
+    "zh": "上颌",
+    "category": "anatomy",
+    "risk": true
+  },
+  {
+    "id": "anatomy_002",
+    "ja": "下顎",
+    "en": "mandible",
+    "zh": "下颌",
+    "category": "anatomy",
+    "risk": true
+  },
+  {
+    "id": "surgery_001",
+    "ja": "骨造成",
+    "en": "bone augmentation",
+    "zh": "骨增量",
+    "category": "surgery",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_001",
+    "ja": "即時荷重",
+    "en": "immediate loading",
+    "zh": "即刻负重",
+    "category": "prosthetics",
+    "risk": true
+  },
+  {
+    "id": "digital_001",
+    "ja": "ガイデッドサージェリー",
+    "en": "guided surgery",
+    "zh": "引导种植手术",
+    "category": "digital",
+    "risk": false
+  },
+  {
+    "id": "unit_001",
+    "ja": "Ncm",
+    "en": "Ncm",
+    "zh": "Ncm",
+    "category": "unit",
+    "risk": true
+  }
+]
