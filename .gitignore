@@ -1,0 +1,16 @@
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Logs
+*.log
+
+# Local environment / secrets
+.env
+.env.*
+
+# Dependencies and build output for future phases
+node_modules/
+dist/
+build/
