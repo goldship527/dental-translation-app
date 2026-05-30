@@ -101,15 +101,6 @@ const silenceThresholds = {
   speechRatio: getPublicNumberEnv("NEXT_PUBLIC_SILENCE_SPEECH_RATIO", 0.01)
 };
 
-type SavedTranslationResult = {
-  japanese?: unknown;
-  english?: unknown;
-  chinese?: unknown;
-  provider?: unknown;
-  mode?: unknown;
-  style?: unknown;
-};
-
 export default function Home() {
   const [provider, setProvider] = useState<ApiProvider>("gemini");
   const [mode, setMode] = useState<Mode>("lecture");
@@ -137,15 +128,6 @@ export default function Home() {
 
   useEffect(() => {
     registerServiceWorker();
-    restoreLastResult({
-      setJapaneseText,
-      setEnglishText,
-      setChineseText,
-      setLastTranslatedJapaneseText,
-      setProvider,
-      setMode,
-      setStyle
-    });
     setCustomGlossary(loadCustomGlossary());
     setTranslationHistory(loadTranslationHistory());
 
@@ -918,43 +900,6 @@ function stopRecorder(recorder: RecorderState | null) {
 
 function isAbortError(error: unknown) {
   return error instanceof Error && error.name === "AbortError";
-}
-
-function restoreLastResult({
-  setJapaneseText,
-  setEnglishText,
-  setChineseText,
-  setLastTranslatedJapaneseText,
-  setProvider,
-  setMode,
-  setStyle
-}: {
-  setJapaneseText: (value: string) => void;
-  setEnglishText: (value: string) => void;
-  setChineseText: (value: string) => void;
-  setLastTranslatedJapaneseText: (value: string) => void;
-  setProvider: (value: ApiProvider) => void;
-  setMode: (value: Mode) => void;
-  setStyle: (value: StylePreset) => void;
-}) {
-  try {
-    const saved = localStorage.getItem(lastResultStorageKey);
-    if (!saved) return;
-
-    const parsed = JSON.parse(saved) as SavedTranslationResult;
-
-    if (typeof parsed.japanese === "string") {
-      setJapaneseText(parsed.japanese);
-      setLastTranslatedJapaneseText(parsed.japanese);
-    }
-    if (typeof parsed.english === "string") setEnglishText(parsed.english);
-    if (typeof parsed.chinese === "string") setChineseText(parsed.chinese);
-    if (isApiProvider(parsed.provider)) setProvider(parsed.provider);
-    if (isMode(parsed.mode)) setMode(parsed.mode);
-    if (isStylePreset(parsed.style)) setStyle(parsed.style);
-  } catch {
-    // Ignore corrupted localStorage data; it should not block first load.
-  }
 }
 
 function createTranslationHistoryItem({

@@ -48,7 +48,6 @@ Dental Lecture Translator は、日本語の音声または日本語原稿を入
   - Gemini: `@google/genai`
   - OpenAI: `openai`
 - 保存:
-  - 最新翻訳結果をlocalStorageへ保存
   - 直近20件の翻訳履歴をlocalStorageへ保存
   - 将来的にはお気に入りで拡張予定
 
@@ -318,6 +317,8 @@ public/data/dental-glossary.json
 ## 12.1 翻訳履歴
 
 翻訳が成功した結果は、端末内のlocalStorageに直近20件まで保存する。
+
+起動時は前回の翻訳結果を自動復元せず、日本語入力欄と翻訳結果は空欄で開始する。過去の結果を使う場合は、利用者が翻訳履歴から明示的に復元する。
 
 保存対象:
 
