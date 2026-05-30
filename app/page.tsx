@@ -5,13 +5,16 @@ import {
   BookOpen,
   Clipboard,
   FileText,
+  History as HistoryIcon,
   Languages,
   Mic,
   MicOff,
   Play,
+  RotateCcw,
   Send,
   Square,
-  Stethoscope
+  Stethoscope,
+  Trash2
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -58,6 +61,15 @@ type TranslationResult = {
   chinese: string;
 };
 
+type TranslationHistoryItem = TranslationResult & {
+  id: string;
+  japanese: string;
+  provider: ApiProvider;
+  mode: Mode;
+  style: StylePreset;
+  savedAt: string;
+};
+
 type ApiAvailability = Record<ApiProvider, boolean>;
 
 type RecorderState = {
@@ -79,6 +91,8 @@ type AudioStats = {
 type SpeechTarget = "english" | "chinese";
 
 const lastResultStorageKey = "dental-lecture-translator:last-result";
+const translationHistoryStorageKey = "dental-lecture-translator:history";
+const maxTranslationHistoryItems = 20;
 
 const silenceThresholds = {
   minDuration: getPublicNumberEnv("NEXT_PUBLIC_SILENCE_MIN_DURATION", 0.6),
@@ -113,6 +127,7 @@ export default function Home() {
   const [apiAvailability, setApiAvailability] = useState<ApiAvailability | null>(null);
   const [glossary, setGlossary] = useState<DentalGlossaryEntry[]>([]);
   const [customGlossary, setCustomGlossary] = useState<DentalGlossaryEntry[]>([]);
+  const [translationHistory, setTranslationHistory] = useState<TranslationHistoryItem[]>([]);
   const [generatingSpeech, setGeneratingSpeech] = useState<SpeechTarget | null>(null);
   const [playingSpeech, setPlayingSpeech] = useState<SpeechTarget | null>(null);
   const recorderRef = useRef<RecorderState | null>(null);
@@ -132,6 +147,7 @@ export default function Home() {
       setStyle
     });
     setCustomGlossary(loadCustomGlossary());
+    setTranslationHistory(loadTranslationHistory());
 
     fetch("/api/health")
       .then((response) => {
@@ -228,18 +244,16 @@ export default function Home() {
         setEnglishText(data.english ?? "");
         setChineseText(data.chinese ?? "");
         setLastTranslatedJapaneseText(text);
-        localStorage.setItem(
-          lastResultStorageKey,
-          JSON.stringify({
-            japanese: text,
-            english: data.english ?? "",
-            chinese: data.chinese ?? "",
-            provider,
-            mode,
-            style,
-            savedAt: new Date().toISOString()
-          })
-        );
+        const historyItem = createTranslationHistoryItem({
+          japanese: text,
+          english: data.english ?? "",
+          chinese: data.chinese ?? "",
+          provider,
+          mode,
+          style
+        });
+        saveLastResult(historyItem);
+        setTranslationHistory((current) => saveTranslationHistory(upsertTranslationHistoryItem(current, historyItem)));
       } catch (reason) {
         if (isAbortError(reason)) return;
         if (isActiveRequest(controller)) {
@@ -410,6 +424,29 @@ export default function Home() {
       return;
     }
     await translateText(japaneseText.trim());
+  };
+
+  const restoreHistoryItem = (item: TranslationHistoryItem) => {
+    stopSpeech();
+    setError("");
+    setJapaneseText(item.japanese);
+    setEnglishText(item.english);
+    setChineseText(item.chinese);
+    setLastTranslatedJapaneseText(item.japanese);
+    setProvider(item.provider);
+    setMode(item.mode);
+    setStyle(item.style);
+    saveLastResult(item);
+  };
+
+  const deleteHistoryItem = (itemId: string) => {
+    setTranslationHistory((current) => saveTranslationHistory(current.filter((item) => item.id !== itemId)));
+  };
+
+  const clearTranslationHistory = () => {
+    if (!translationHistory.length) return;
+    if (!window.confirm("翻訳履歴をすべて削除しますか？")) return;
+    setTranslationHistory(saveTranslationHistory([]));
   };
 
   const isTranslationPossiblyStale = Boolean(
@@ -678,6 +715,13 @@ export default function Home() {
           }}
         />
 
+        <HistoryPanel
+          history={translationHistory}
+          onRestore={restoreHistoryItem}
+          onDelete={deleteHistoryItem}
+          onClear={clearTranslationHistory}
+        />
+
         <section className="card panel riskPanel">
           <h2 className="riskHeader">
             <AlertTriangle size={18} />
@@ -703,6 +747,57 @@ export default function Home() {
 
       </div>
     </main>
+  );
+}
+
+function HistoryPanel({
+  history,
+  onRestore,
+  onDelete,
+  onClear
+}: {
+  history: TranslationHistoryItem[];
+  onRestore: (item: TranslationHistoryItem) => void;
+  onDelete: (itemId: string) => void;
+  onClear: () => void;
+}) {
+  return (
+    <section className="card panel historyPanel">
+      <div className="historyHeader">
+        <h2 className="sectionTitle">
+          <HistoryIcon size={18} />
+          翻訳履歴
+        </h2>
+        <button className="copyButton smallIconButton" type="button" onClick={onClear} disabled={!history.length} title="履歴をすべて削除">
+          <Trash2 size={16} />
+        </button>
+      </div>
+      {history.length ? (
+        <ul className="historyList">
+          {history.map((item) => (
+            <li className="historyItem" key={item.id}>
+              <button className="historyItemMain" type="button" onClick={() => onRestore(item)}>
+                <span className="historyMeta">
+                  {formatHistoryTimestamp(item.savedAt)} / {providerLabels[item.provider]} / {modeLabels[item.mode]}
+                </span>
+                <span className="historySource">{item.japanese}</span>
+                <span className="historyTranslation">{item.english}</span>
+              </button>
+              <div className="historyActions">
+                <button className="copyButton smallIconButton" type="button" onClick={() => onRestore(item)} title="履歴を復元">
+                  <RotateCcw size={16} />
+                </button>
+                <button className="copyButton smallIconButton" type="button" onClick={() => onDelete(item.id)} title="この履歴を削除">
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="placeholder">翻訳すると、直近20件までここに保存されます。</p>
+      )}
+    </section>
   );
 }
 
@@ -860,6 +955,97 @@ function restoreLastResult({
   } catch {
     // Ignore corrupted localStorage data; it should not block first load.
   }
+}
+
+function createTranslationHistoryItem({
+  japanese,
+  english,
+  chinese,
+  provider,
+  mode,
+  style
+}: Omit<TranslationHistoryItem, "id" | "savedAt">): TranslationHistoryItem {
+  const savedAt = new Date().toISOString();
+  return {
+    id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+    japanese,
+    english,
+    chinese,
+    provider,
+    mode,
+    style,
+    savedAt
+  };
+}
+
+function saveLastResult(item: TranslationHistoryItem) {
+  localStorage.setItem(
+    lastResultStorageKey,
+    JSON.stringify({
+      japanese: item.japanese,
+      english: item.english,
+      chinese: item.chinese,
+      provider: item.provider,
+      mode: item.mode,
+      style: item.style,
+      savedAt: item.savedAt
+    })
+  );
+}
+
+function loadTranslationHistory(): TranslationHistoryItem[] {
+  try {
+    const saved = localStorage.getItem(translationHistoryStorageKey);
+    if (!saved) return [];
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(isTranslationHistoryItem).slice(0, maxTranslationHistoryItems);
+  } catch {
+    return [];
+  }
+}
+
+function saveTranslationHistory(items: TranslationHistoryItem[]) {
+  const nextItems = items.slice(0, maxTranslationHistoryItems);
+  localStorage.setItem(translationHistoryStorageKey, JSON.stringify(nextItems));
+  return nextItems;
+}
+
+function upsertTranslationHistoryItem(items: TranslationHistoryItem[], nextItem: TranslationHistoryItem) {
+  const normalizedJapanese = nextItem.japanese.trim();
+  const withoutDuplicate = items.filter(
+    (item) =>
+      item.japanese.trim() !== normalizedJapanese ||
+      item.english.trim() !== nextItem.english.trim() ||
+      item.chinese.trim() !== nextItem.chinese.trim()
+  );
+  return [nextItem, ...withoutDuplicate].slice(0, maxTranslationHistoryItems);
+}
+
+function isTranslationHistoryItem(value: unknown): value is TranslationHistoryItem {
+  if (typeof value !== "object" || value === null) return false;
+  const item = value as Partial<TranslationHistoryItem>;
+  return (
+    typeof item.id === "string" &&
+    typeof item.japanese === "string" &&
+    typeof item.english === "string" &&
+    typeof item.chinese === "string" &&
+    typeof item.savedAt === "string" &&
+    isApiProvider(item.provider) &&
+    isMode(item.mode) &&
+    isStylePreset(item.style)
+  );
+}
+
+function formatHistoryTimestamp(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "日時不明";
+  return new Intl.DateTimeFormat("ja-JP", {
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(date);
 }
 
 function isApiProvider(value: unknown): value is ApiProvider {
