@@ -136,6 +136,9 @@ export default function Home() {
   const [historySearch, setHistorySearch] = useState("");
   const [historyProviderFilter, setHistoryProviderFilter] = useState<HistoryProviderFilter>("all");
   const [historyModeFilter, setHistoryModeFilter] = useState<HistoryModeFilter>("all");
+  const [favoriteSearch, setFavoriteSearch] = useState("");
+  const [favoriteProviderFilter, setFavoriteProviderFilter] = useState<HistoryProviderFilter>("all");
+  const [favoriteModeFilter, setFavoriteModeFilter] = useState<HistoryModeFilter>("all");
   const [generatingSpeech, setGeneratingSpeech] = useState<SpeechTarget | null>(null);
   const [playingSpeech, setPlayingSpeech] = useState<SpeechTarget | null>(null);
   const recorderRef = useRef<RecorderState | null>(null);
@@ -475,6 +478,16 @@ export default function Home() {
     [historyModeFilter, historyProviderFilter, historySearch, translationHistory]
   );
 
+  const filteredTranslationFavorites = useMemo(
+    () =>
+      filterTranslationHistory(translationFavorites, {
+        search: favoriteSearch,
+        provider: favoriteProviderFilter,
+        mode: favoriteModeFilter
+      }),
+    [favoriteModeFilter, favoriteProviderFilter, favoriteSearch, translationFavorites]
+  );
+
   const saveFavoriteItem = (item: TranslationHistoryItem) => {
     setTranslationFavorites((current) => saveTranslationFavorites(upsertTranslationFavoriteItem(current, item)));
   };
@@ -761,9 +774,16 @@ export default function Home() {
         />
 
         <FavoritePanel
-          favorites={translationFavorites}
+          favorites={filteredTranslationFavorites}
+          totalCount={translationFavorites.length}
+          search={favoriteSearch}
+          providerFilter={favoriteProviderFilter}
+          modeFilter={favoriteModeFilter}
           canSaveCurrent={Boolean(currentTranslationItem)}
           isCurrentSaved={Boolean(currentTranslationItem && favoriteKeys.has(getTranslationItemKey(currentTranslationItem)))}
+          onSearchChange={setFavoriteSearch}
+          onProviderFilterChange={setFavoriteProviderFilter}
+          onModeFilterChange={setFavoriteModeFilter}
           onSaveCurrent={saveCurrentFavorite}
           onRestore={restoreHistoryItem}
           onDelete={deleteFavoriteItem}
@@ -927,21 +947,38 @@ function HistoryPanel({
 
 function FavoritePanel({
   favorites,
+  totalCount,
+  search,
+  providerFilter,
+  modeFilter,
   canSaveCurrent,
   isCurrentSaved,
+  onSearchChange,
+  onProviderFilterChange,
+  onModeFilterChange,
   onSaveCurrent,
   onRestore,
   onDelete,
   onClear
 }: {
   favorites: TranslationHistoryItem[];
+  totalCount: number;
+  search: string;
+  providerFilter: HistoryProviderFilter;
+  modeFilter: HistoryModeFilter;
   canSaveCurrent: boolean;
   isCurrentSaved: boolean;
+  onSearchChange: (value: string) => void;
+  onProviderFilterChange: (value: HistoryProviderFilter) => void;
+  onModeFilterChange: (value: HistoryModeFilter) => void;
   onSaveCurrent: () => void;
   onRestore: (item: TranslationHistoryItem) => void;
   onDelete: (itemId: string) => void;
   onClear: () => void;
 }) {
+  const hasFavorites = totalCount > 0;
+  const countLabel = favorites.length === totalCount ? `${totalCount}件` : `${favorites.length} / ${totalCount}件表示`;
+
   return (
     <section className="card panel historyPanel">
       <div className="historyHeader">
@@ -954,11 +991,45 @@ function FavoritePanel({
             <Star size={16} />
             {isCurrentSaved ? "保存済み" : "現在の翻訳を保存"}
           </button>
-          <button className="copyButton smallIconButton" type="button" onClick={onClear} disabled={!favorites.length} title="お気に入りをすべて削除">
+          <button className="copyButton smallIconButton" type="button" onClick={onClear} disabled={!hasFavorites} title="お気に入りをすべて削除">
             <Trash2 size={16} />
           </button>
         </div>
       </div>
+      <div className="historyTools">
+        <label className="searchBox">
+          <Search size={16} />
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="お気に入りを検索"
+            aria-label="お気に入り翻訳を検索"
+          />
+        </label>
+        <select
+          className="select"
+          value={providerFilter}
+          onChange={(event) => onProviderFilterChange(event.target.value as HistoryProviderFilter)}
+          aria-label="お気に入りをAPIで絞り込み"
+        >
+          <option value="all">すべてのAPI</option>
+          <option value="gemini">{providerLabels.gemini}</option>
+          <option value="openai">{providerLabels.openai}</option>
+        </select>
+        <select
+          className="select"
+          value={modeFilter}
+          onChange={(event) => onModeFilterChange(event.target.value as HistoryModeFilter)}
+          aria-label="お気に入りをモードで絞り込み"
+        >
+          <option value="all">すべてのモード</option>
+          <option value="lecture">{modeLabels.lecture}</option>
+          <option value="qa">{modeLabels.qa}</option>
+          <option value="script">{modeLabels.script}</option>
+        </select>
+      </div>
+      <p className="historyCount">{countLabel}</p>
       {favorites.length ? (
         <ul className="historyList">
           {favorites.map((item) => (
@@ -982,7 +1053,9 @@ function FavoritePanel({
           ))}
         </ul>
       ) : (
-        <p className="placeholder">本番で使いたい翻訳を固定保存できます。</p>
+        <p className="placeholder">
+          {hasFavorites ? "条件に一致するお気に入りはありません。" : "本番で使いたい翻訳を固定保存できます。"}
+        </p>
       )}
     </section>
   );
