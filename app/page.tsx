@@ -13,6 +13,7 @@ import {
   RotateCcw,
   Send,
   Square,
+  Star,
   Stethoscope,
   Trash2
 } from "lucide-react";
@@ -92,7 +93,9 @@ type SpeechTarget = "english" | "chinese";
 
 const lastResultStorageKey = "dental-lecture-translator:last-result";
 const translationHistoryStorageKey = "dental-lecture-translator:history";
+const translationFavoritesStorageKey = "dental-lecture-translator:favorites";
 const maxTranslationHistoryItems = 20;
+const maxTranslationFavoriteItems = 50;
 
 const silenceThresholds = {
   minDuration: getPublicNumberEnv("NEXT_PUBLIC_SILENCE_MIN_DURATION", 0.6),
@@ -119,6 +122,7 @@ export default function Home() {
   const [glossary, setGlossary] = useState<DentalGlossaryEntry[]>([]);
   const [customGlossary, setCustomGlossary] = useState<DentalGlossaryEntry[]>([]);
   const [translationHistory, setTranslationHistory] = useState<TranslationHistoryItem[]>([]);
+  const [translationFavorites, setTranslationFavorites] = useState<TranslationHistoryItem[]>([]);
   const [generatingSpeech, setGeneratingSpeech] = useState<SpeechTarget | null>(null);
   const [playingSpeech, setPlayingSpeech] = useState<SpeechTarget | null>(null);
   const recorderRef = useRef<RecorderState | null>(null);
@@ -130,6 +134,7 @@ export default function Home() {
     registerServiceWorker();
     setCustomGlossary(loadCustomGlossary());
     setTranslationHistory(loadTranslationHistory());
+    setTranslationFavorites(loadTranslationFavorites());
 
     fetch("/api/health")
       .then((response) => {
@@ -431,6 +436,41 @@ export default function Home() {
     setTranslationHistory(saveTranslationHistory([]));
   };
 
+  const currentTranslationItem = useMemo<TranslationHistoryItem | null>(() => {
+    if (!lastTranslatedJapaneseText || (!englishText && !chineseText)) return null;
+    return createTranslationHistoryItem({
+      japanese: lastTranslatedJapaneseText,
+      english: englishText,
+      chinese: chineseText,
+      provider,
+      mode,
+      style
+    });
+  }, [chineseText, englishText, lastTranslatedJapaneseText, mode, provider, style]);
+
+  const favoriteKeys = useMemo(() => {
+    return new Set(translationFavorites.map(getTranslationItemKey));
+  }, [translationFavorites]);
+
+  const saveFavoriteItem = (item: TranslationHistoryItem) => {
+    setTranslationFavorites((current) => saveTranslationFavorites(upsertTranslationFavoriteItem(current, item)));
+  };
+
+  const saveCurrentFavorite = () => {
+    if (!currentTranslationItem) return;
+    saveFavoriteItem(currentTranslationItem);
+  };
+
+  const deleteFavoriteItem = (itemId: string) => {
+    setTranslationFavorites((current) => saveTranslationFavorites(current.filter((item) => item.id !== itemId)));
+  };
+
+  const clearTranslationFavorites = () => {
+    if (!translationFavorites.length) return;
+    if (!window.confirm("お気に入りをすべて削除しますか？")) return;
+    setTranslationFavorites(saveTranslationFavorites([]));
+  };
+
   const isTranslationPossiblyStale = Boolean(
     (englishText || chineseText) &&
       lastTranslatedJapaneseText &&
@@ -697,9 +737,21 @@ export default function Home() {
           }}
         />
 
+        <FavoritePanel
+          favorites={translationFavorites}
+          canSaveCurrent={Boolean(currentTranslationItem)}
+          isCurrentSaved={Boolean(currentTranslationItem && favoriteKeys.has(getTranslationItemKey(currentTranslationItem)))}
+          onSaveCurrent={saveCurrentFavorite}
+          onRestore={restoreHistoryItem}
+          onDelete={deleteFavoriteItem}
+          onClear={clearTranslationFavorites}
+        />
+
         <HistoryPanel
           history={translationHistory}
+          favoriteKeys={favoriteKeys}
           onRestore={restoreHistoryItem}
+          onFavorite={saveFavoriteItem}
           onDelete={deleteHistoryItem}
           onClear={clearTranslationHistory}
         />
@@ -734,12 +786,16 @@ export default function Home() {
 
 function HistoryPanel({
   history,
+  favoriteKeys,
   onRestore,
+  onFavorite,
   onDelete,
   onClear
 }: {
   history: TranslationHistoryItem[];
+  favoriteKeys: Set<string>;
   onRestore: (item: TranslationHistoryItem) => void;
+  onFavorite: (item: TranslationHistoryItem) => void;
   onDelete: (itemId: string) => void;
   onClear: () => void;
 }) {
@@ -766,6 +822,9 @@ function HistoryPanel({
                 <span className="historyTranslation">{item.english}</span>
               </button>
               <div className="historyActions">
+                <button className="copyButton smallIconButton" type="button" onClick={() => onFavorite(item)} disabled={favoriteKeys.has(getTranslationItemKey(item))} title="お気に入りに保存">
+                  <Star size={16} />
+                </button>
                 <button className="copyButton smallIconButton" type="button" onClick={() => onRestore(item)} title="履歴を復元">
                   <RotateCcw size={16} />
                 </button>
@@ -778,6 +837,69 @@ function HistoryPanel({
         </ul>
       ) : (
         <p className="placeholder">翻訳すると、直近20件までここに保存されます。</p>
+      )}
+    </section>
+  );
+}
+
+function FavoritePanel({
+  favorites,
+  canSaveCurrent,
+  isCurrentSaved,
+  onSaveCurrent,
+  onRestore,
+  onDelete,
+  onClear
+}: {
+  favorites: TranslationHistoryItem[];
+  canSaveCurrent: boolean;
+  isCurrentSaved: boolean;
+  onSaveCurrent: () => void;
+  onRestore: (item: TranslationHistoryItem) => void;
+  onDelete: (itemId: string) => void;
+  onClear: () => void;
+}) {
+  return (
+    <section className="card panel historyPanel">
+      <div className="historyHeader">
+        <h2 className="sectionTitle">
+          <Star size={18} />
+          お気に入り
+        </h2>
+        <div className="historyActions">
+          <button className="secondaryButton compactButton" type="button" onClick={onSaveCurrent} disabled={!canSaveCurrent || isCurrentSaved}>
+            <Star size={16} />
+            {isCurrentSaved ? "保存済み" : "現在の翻訳を保存"}
+          </button>
+          <button className="copyButton smallIconButton" type="button" onClick={onClear} disabled={!favorites.length} title="お気に入りをすべて削除">
+            <Trash2 size={16} />
+          </button>
+        </div>
+      </div>
+      {favorites.length ? (
+        <ul className="historyList">
+          {favorites.map((item) => (
+            <li className="historyItem" key={item.id}>
+              <button className="historyItemMain" type="button" onClick={() => onRestore(item)}>
+                <span className="historyMeta">
+                  {formatHistoryTimestamp(item.savedAt)} / {providerLabels[item.provider]} / {modeLabels[item.mode]}
+                </span>
+                <span className="historySource">{item.japanese}</span>
+                <span className="historyTranslation">{item.english}</span>
+              </button>
+              <div className="historyActions">
+                <button className="copyButton smallIconButton" type="button" onClick={() => onRestore(item)} title="お気に入りを復元">
+                  <RotateCcw size={16} />
+                </button>
+                <button className="copyButton smallIconButton" type="button" onClick={() => onDelete(item.id)} title="このお気に入りを削除">
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="placeholder">本番で使いたい翻訳を固定保存できます。</p>
       )}
     </section>
   );
@@ -950,21 +1072,52 @@ function loadTranslationHistory(): TranslationHistoryItem[] {
   }
 }
 
+function loadTranslationFavorites(): TranslationHistoryItem[] {
+  try {
+    const saved = localStorage.getItem(translationFavoritesStorageKey);
+    if (!saved) return [];
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(isTranslationHistoryItem).slice(0, maxTranslationFavoriteItems);
+  } catch {
+    return [];
+  }
+}
+
 function saveTranslationHistory(items: TranslationHistoryItem[]) {
   const nextItems = items.slice(0, maxTranslationHistoryItems);
   localStorage.setItem(translationHistoryStorageKey, JSON.stringify(nextItems));
   return nextItems;
 }
 
+function saveTranslationFavorites(items: TranslationHistoryItem[]) {
+  const nextItems = items.slice(0, maxTranslationFavoriteItems);
+  localStorage.setItem(translationFavoritesStorageKey, JSON.stringify(nextItems));
+  return nextItems;
+}
+
 function upsertTranslationHistoryItem(items: TranslationHistoryItem[], nextItem: TranslationHistoryItem) {
+  const withoutDuplicate = items.filter((item) => getTranslationItemKey(item) !== getTranslationItemKey(nextItem));
+  return [nextItem, ...withoutDuplicate].slice(0, maxTranslationHistoryItems);
+}
+
+function upsertTranslationFavoriteItem(items: TranslationHistoryItem[], nextItem: TranslationHistoryItem) {
   const normalizedJapanese = nextItem.japanese.trim();
   const withoutDuplicate = items.filter(
-    (item) =>
-      item.japanese.trim() !== normalizedJapanese ||
-      item.english.trim() !== nextItem.english.trim() ||
-      item.chinese.trim() !== nextItem.chinese.trim()
+    (item) => getTranslationItemKey(item) !== getTranslationItemKey(nextItem)
   );
-  return [nextItem, ...withoutDuplicate].slice(0, maxTranslationHistoryItems);
+  return [
+    {
+      ...nextItem,
+      id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+      japanese: normalizedJapanese
+    },
+    ...withoutDuplicate
+  ].slice(0, maxTranslationFavoriteItems);
+}
+
+function getTranslationItemKey(item: Pick<TranslationHistoryItem, "japanese" | "english" | "chinese">) {
+  return [item.japanese.trim(), item.english.trim(), item.chinese.trim()].join("\u001f");
 }
 
 function isTranslationHistoryItem(value: unknown): value is TranslationHistoryItem {

@@ -609,6 +609,8 @@ button {
 .historyActions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 6px;
 }
 
