@@ -12,6 +12,7 @@ import {
   Play,
   RotateCcw,
   Send,
+  Search,
   Square,
   Star,
   Stethoscope,
@@ -71,6 +72,15 @@ type TranslationHistoryItem = TranslationResult & {
   savedAt: string;
 };
 
+type HistoryProviderFilter = "all" | ApiProvider;
+type HistoryModeFilter = "all" | Mode;
+
+type TranslationHistoryFilters = {
+  search: string;
+  provider: HistoryProviderFilter;
+  mode: HistoryModeFilter;
+};
+
 type ApiAvailability = Record<ApiProvider, boolean>;
 
 type RecorderState = {
@@ -123,6 +133,9 @@ export default function Home() {
   const [customGlossary, setCustomGlossary] = useState<DentalGlossaryEntry[]>([]);
   const [translationHistory, setTranslationHistory] = useState<TranslationHistoryItem[]>([]);
   const [translationFavorites, setTranslationFavorites] = useState<TranslationHistoryItem[]>([]);
+  const [historySearch, setHistorySearch] = useState("");
+  const [historyProviderFilter, setHistoryProviderFilter] = useState<HistoryProviderFilter>("all");
+  const [historyModeFilter, setHistoryModeFilter] = useState<HistoryModeFilter>("all");
   const [generatingSpeech, setGeneratingSpeech] = useState<SpeechTarget | null>(null);
   const [playingSpeech, setPlayingSpeech] = useState<SpeechTarget | null>(null);
   const recorderRef = useRef<RecorderState | null>(null);
@@ -452,6 +465,16 @@ export default function Home() {
     return new Set(translationFavorites.map(getTranslationItemKey));
   }, [translationFavorites]);
 
+  const filteredTranslationHistory = useMemo(
+    () =>
+      filterTranslationHistory(translationHistory, {
+        search: historySearch,
+        provider: historyProviderFilter,
+        mode: historyModeFilter
+      }),
+    [historyModeFilter, historyProviderFilter, historySearch, translationHistory]
+  );
+
   const saveFavoriteItem = (item: TranslationHistoryItem) => {
     setTranslationFavorites((current) => saveTranslationFavorites(upsertTranslationFavoriteItem(current, item)));
   };
@@ -748,8 +771,15 @@ export default function Home() {
         />
 
         <HistoryPanel
-          history={translationHistory}
+          history={filteredTranslationHistory}
+          totalCount={translationHistory.length}
+          search={historySearch}
+          providerFilter={historyProviderFilter}
+          modeFilter={historyModeFilter}
           favoriteKeys={favoriteKeys}
+          onSearchChange={setHistorySearch}
+          onProviderFilterChange={setHistoryProviderFilter}
+          onModeFilterChange={setHistoryModeFilter}
           onRestore={restoreHistoryItem}
           onFavorite={saveFavoriteItem}
           onDelete={deleteHistoryItem}
@@ -786,19 +816,36 @@ export default function Home() {
 
 function HistoryPanel({
   history,
+  totalCount,
+  search,
+  providerFilter,
+  modeFilter,
   favoriteKeys,
+  onSearchChange,
+  onProviderFilterChange,
+  onModeFilterChange,
   onRestore,
   onFavorite,
   onDelete,
   onClear
 }: {
   history: TranslationHistoryItem[];
+  totalCount: number;
+  search: string;
+  providerFilter: HistoryProviderFilter;
+  modeFilter: HistoryModeFilter;
   favoriteKeys: Set<string>;
+  onSearchChange: (value: string) => void;
+  onProviderFilterChange: (value: HistoryProviderFilter) => void;
+  onModeFilterChange: (value: HistoryModeFilter) => void;
   onRestore: (item: TranslationHistoryItem) => void;
   onFavorite: (item: TranslationHistoryItem) => void;
   onDelete: (itemId: string) => void;
   onClear: () => void;
 }) {
+  const hasHistory = totalCount > 0;
+  const countLabel = history.length === totalCount ? `${totalCount}件` : `${history.length} / ${totalCount}件表示`;
+
   return (
     <section className="card panel historyPanel">
       <div className="historyHeader">
@@ -806,10 +853,44 @@ function HistoryPanel({
           <HistoryIcon size={18} />
           翻訳履歴
         </h2>
-        <button className="copyButton smallIconButton" type="button" onClick={onClear} disabled={!history.length} title="履歴をすべて削除">
+        <button className="copyButton smallIconButton" type="button" onClick={onClear} disabled={!hasHistory} title="履歴をすべて削除">
           <Trash2 size={16} />
         </button>
       </div>
+      <div className="historyTools">
+        <label className="searchBox">
+          <Search size={16} />
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="日本語・英語・中国語で検索"
+            aria-label="翻訳履歴を検索"
+          />
+        </label>
+        <select
+          className="select"
+          value={providerFilter}
+          onChange={(event) => onProviderFilterChange(event.target.value as HistoryProviderFilter)}
+          aria-label="APIで絞り込み"
+        >
+          <option value="all">すべてのAPI</option>
+          <option value="gemini">{providerLabels.gemini}</option>
+          <option value="openai">{providerLabels.openai}</option>
+        </select>
+        <select
+          className="select"
+          value={modeFilter}
+          onChange={(event) => onModeFilterChange(event.target.value as HistoryModeFilter)}
+          aria-label="モードで絞り込み"
+        >
+          <option value="all">すべてのモード</option>
+          <option value="lecture">{modeLabels.lecture}</option>
+          <option value="qa">{modeLabels.qa}</option>
+          <option value="script">{modeLabels.script}</option>
+        </select>
+      </div>
+      <p className="historyCount">{countLabel}</p>
       {history.length ? (
         <ul className="historyList">
           {history.map((item) => (
@@ -836,7 +917,9 @@ function HistoryPanel({
           ))}
         </ul>
       ) : (
-        <p className="placeholder">翻訳すると、直近20件までここに保存されます。</p>
+        <p className="placeholder">
+          {hasHistory ? "条件に一致する履歴はありません。" : "翻訳すると、直近20件までここに保存されます。"}
+        </p>
       )}
     </section>
   );
@@ -1114,6 +1197,30 @@ function upsertTranslationFavoriteItem(items: TranslationHistoryItem[], nextItem
     },
     ...withoutDuplicate
   ].slice(0, maxTranslationFavoriteItems);
+}
+
+function filterTranslationHistory(items: TranslationHistoryItem[], filters: TranslationHistoryFilters) {
+  const search = filters.search.trim().toLowerCase();
+
+  return items.filter((item) => {
+    if (filters.provider !== "all" && item.provider !== filters.provider) return false;
+    if (filters.mode !== "all" && item.mode !== filters.mode) return false;
+    if (!search) return true;
+
+    const searchableText = [
+      item.japanese,
+      item.english,
+      item.chinese,
+      providerLabels[item.provider],
+      modeLabels[item.mode],
+      styleLabels[item.style],
+      formatHistoryTimestamp(item.savedAt)
+    ]
+      .join("\n")
+      .toLowerCase();
+
+    return searchableText.includes(search);
+  });
 }
 
 function getTranslationItemKey(item: Pick<TranslationHistoryItem, "japanese" | "english" | "chinese">) {
