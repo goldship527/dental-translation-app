@@ -29,21 +29,26 @@ export function buildTranslationPrompt({
   glossary: DentalGlossaryEntry[];
 }) {
   const glossaryLines = glossary
-    .map((entry) => `- ${entry.ja}: en="${entry.en}", zh="${entry.zh}", category=${entry.category}, risk=${entry.risk}`)
+    .map((entry) => {
+      const reading = entry.reading ? `, reading="${entry.reading}"` : "";
+      return `- ${entry.ja}${reading}: en="${entry.en}", zh="${entry.zh}", category=${entry.category}, risk=${entry.risk}`;
+    })
     .join("\n");
-
-  return [
+  const promptParts = [
     "Translate the Japanese dental lecture text into natural professional English and Simplified Chinese for dental professionals.",
     "Preserve technical terms, numerical values, anatomical directions, implant system names, product names, procedure names, contraindications, and indications accurately.",
     "Do not add medical claims, diagnoses, treatment recommendations, or safety claims that are not present in the original.",
     modeInstructions[mode],
     styleInstructions[style],
     "Return only JSON that matches the requested schema.",
-    "",
-    "Dental glossary preferences:",
-    glossaryLines || "(No glossary terms provided.)",
-    "",
-    "Japanese source text:",
-    text
-  ].join("\n");
+    ""
+  ];
+
+  if (glossaryLines) {
+    promptParts.push("Dental glossary preferences:", glossaryLines, "");
+  }
+
+  promptParts.push("Japanese source text:", text);
+
+  return promptParts.join("\n");
 }

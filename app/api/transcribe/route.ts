@@ -23,6 +23,7 @@ export async function POST(request: Request) {
 
     return await transcribeWithGemini(audio, durationSeconds);
   } catch (error) {
+    console.error("[transcribe]", error);
     return NextResponse.json(
       { error: formatApiError(error, "文字起こしAPIでエラーが発生しました。") },
       { status: getApiErrorStatus(error) }

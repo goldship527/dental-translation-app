@@ -15,6 +15,7 @@ export type DentalGlossaryEntry = {
   zh: string;
   category: string;
   risk: boolean;
+  reading?: string;
   note?: string;
 };
 

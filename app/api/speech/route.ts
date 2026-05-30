@@ -51,6 +51,7 @@ export async function POST(request: Request) {
 
     return await createGeminiSpeech({ text, language, speed, voiceStyle });
   } catch (error) {
+    console.error("[speech]", error);
     return NextResponse.json(
       { error: formatApiError(error, "音声生成APIでエラーが発生しました。") },
       { status: getApiErrorStatus(error) }

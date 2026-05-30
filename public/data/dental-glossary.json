@@ -6,7 +6,8 @@
     "zh": "牙种植体",
     "category": "implant",
     "risk": false,
-    "note": "文脈によりimplantでも可"
+    "note": "文脈によりimplantでも可",
+    "reading": "いんぷらんと"
   },
   {
     "id": "implant_002",
@@ -14,7 +15,8 @@
     "en": "implant placement",
     "zh": "种植体植入",
     "category": "surgery",
-    "risk": false
+    "risk": false,
+    "reading": "いんぷらんとまいにゅう"
   },
   {
     "id": "anatomy_001",
@@ -22,7 +24,8 @@
     "en": "maxilla",
     "zh": "上颌",
     "category": "anatomy",
-    "risk": true
+    "risk": true,
+    "reading": "じょうがく"
   },
   {
     "id": "anatomy_002",
@@ -30,7 +33,8 @@
     "en": "mandible",
     "zh": "下颌",
     "category": "anatomy",
-    "risk": true
+    "risk": true,
+    "reading": "かがく"
   },
   {
     "id": "surgery_001",
@@ -38,7 +42,8 @@
     "en": "bone augmentation",
     "zh": "骨增量",
     "category": "surgery",
-    "risk": false
+    "risk": false,
+    "reading": "こつぞうせい"
   },
   {
     "id": "prosthetics_001",
@@ -46,7 +51,8 @@
     "en": "immediate loading",
     "zh": "即刻负重",
     "category": "prosthetics",
-    "risk": true
+    "risk": true,
+    "reading": "そくじかじゅう"
   },
   {
     "id": "digital_001",
@@ -54,7 +60,8 @@
     "en": "guided surgery",
     "zh": "引导种植手术",
     "category": "digital",
-    "risk": false
+    "risk": false,
+    "reading": "がいでっどさーじぇりー"
   },
   {
     "id": "unit_001",
@@ -62,6 +69,3728 @@
     "en": "Ncm",
     "zh": "Ncm",
     "category": "unit",
+    "risk": true,
+    "reading": "にゅーとん"
+  },
+  {
+    "id": "implant_003",
+    "ja": "インプラント体",
+    "en": "implant body / fixture",
+    "zh": "种植体",
+    "category": "implant",
+    "risk": false,
+    "reading": "いんぷらんとたい"
+  },
+  {
+    "id": "implant_004",
+    "ja": "アバットメント",
+    "en": "implant abutment",
+    "zh": "种植基台",
+    "category": "prosthetics",
+    "risk": false,
+    "reading": "あばっとめんと"
+  },
+  {
+    "id": "implant_005",
+    "ja": "基台",
+    "en": "abutment",
+    "zh": "基台",
+    "category": "prosthetics",
+    "risk": false,
+    "reading": "きだい"
+  },
+  {
+    "id": "implant_006",
+    "ja": "アバットメントスクリュー",
+    "en": "abutment screw",
+    "zh": "基台螺丝",
+    "category": "prosthetics",
+    "risk": true,
+    "note": "ゆるみや破折に関わるため要確認",
+    "reading": "あばっとめんとすくりゅー"
+  },
+  {
+    "id": "implant_007",
+    "ja": "インプラント上部構造",
+    "en": "implant superstructure",
+    "zh": "种植修复体",
+    "category": "prosthetics",
+    "risk": false,
+    "reading": "いんぷらんとじょうぶこうぞう"
+  },
+  {
+    "id": "implant_008",
+    "ja": "オッセオインテグレーション",
+    "en": "osseointegration",
+    "zh": "骨结合",
+    "category": "implant",
+    "risk": false,
+    "reading": "おっせおいんてぐれーしょん"
+  },
+  {
+    "id": "implant_009",
+    "ja": "骨結合",
+    "en": "osseointegration",
+    "zh": "骨结合",
+    "category": "implant",
+    "risk": false,
+    "reading": "こつけつごう"
+  },
+  {
+    "id": "implant_010",
+    "ja": "初期固定",
+    "en": "primary stability",
+    "zh": "初期稳定性",
+    "category": "implant",
+    "risk": true,
+    "reading": "しょきこてい"
+  },
+  {
+    "id": "implant_011",
+    "ja": "二次固定",
+    "en": "secondary stability",
+    "zh": "二期稳定性",
+    "category": "implant",
+    "risk": true,
+    "reading": "にじこてい"
+  },
+  {
+    "id": "implant_012",
+    "ja": "埋入トルク",
+    "en": "insertion torque",
+    "zh": "植入扭矩",
+    "category": "surgery",
+    "risk": true,
+    "note": "数値と単位を必ず確認",
+    "reading": "まいにゅうとるく"
+  },
+  {
+    "id": "implant_013",
+    "ja": "即時埋入",
+    "en": "immediate implant placement",
+    "zh": "即刻种植",
+    "category": "surgery",
+    "risk": true,
+    "reading": "そくじまいにゅう"
+  },
+  {
+    "id": "implant_014",
+    "ja": "即時負荷",
+    "en": "immediate loading",
+    "zh": "即刻负重",
+    "category": "prosthetics",
+    "risk": true,
+    "reading": "そくじふか"
+  },
+  {
+    "id": "implant_015",
+    "ja": "遅延埋入",
+    "en": "delayed implant placement",
+    "zh": "延期种植",
+    "category": "surgery",
+    "risk": true,
+    "reading": "ちえんまいにゅう"
+  },
+  {
+    "id": "implant_016",
+    "ja": "サージカルガイド",
+    "en": "surgical guide",
+    "zh": "种植导板",
+    "category": "digital",
+    "risk": false,
+    "reading": "さーじかるがいど"
+  },
+  {
+    "id": "implant_017",
+    "ja": "GBR",
+    "en": "guided bone regeneration",
+    "zh": "引导骨再生",
+    "category": "surgery",
+    "risk": false,
+    "reading": "じーびーあーる"
+  },
+  {
+    "id": "implant_018",
+    "ja": "骨再生誘導法",
+    "en": "guided bone regeneration",
+    "zh": "引导骨再生",
+    "category": "surgery",
+    "risk": false,
+    "reading": "こつさいせいゆうどうほう"
+  },
+  {
+    "id": "implant_019",
+    "ja": "骨補填材",
+    "en": "bone substitute / bone graft material",
+    "zh": "骨替代材料",
+    "category": "surgery",
+    "risk": false,
+    "reading": "こつほてんざい"
+  },
+  {
+    "id": "implant_020",
+    "ja": "骨増生",
+    "en": "bone augmentation",
+    "zh": "骨增量",
+    "category": "surgery",
+    "risk": false,
+    "reading": "こつぞうせい"
+  },
+  {
+    "id": "implant_021",
+    "ja": "自家骨",
+    "en": "autogenous bone / autograft",
+    "zh": "自体骨",
+    "category": "surgery",
+    "risk": false,
+    "reading": "じかこつ"
+  },
+  {
+    "id": "implant_022",
+    "ja": "他家骨",
+    "en": "allograft",
+    "zh": "同种异体骨",
+    "category": "surgery",
+    "risk": false,
+    "reading": "たかこつ"
+  },
+  {
+    "id": "implant_023",
+    "ja": "異種骨",
+    "en": "xenograft",
+    "zh": "异种骨",
+    "category": "surgery",
+    "risk": false,
+    "reading": "いしゅこつ"
+  },
+  {
+    "id": "implant_024",
+    "ja": "人工骨",
+    "en": "synthetic bone substitute",
+    "zh": "人工骨材料",
+    "category": "surgery",
+    "risk": false,
+    "reading": "じんこうこつ"
+  },
+  {
+    "id": "implant_025",
+    "ja": "上顎洞底挙上術",
+    "en": "sinus floor elevation",
+    "zh": "上颌窦底提升",
+    "category": "surgery",
+    "risk": true,
+    "reading": "じょうがくどうていきょじょうじゅつ"
+  },
+  {
+    "id": "implant_026",
+    "ja": "サイナスリフト",
+    "en": "sinus lift / lateral window technique",
+    "zh": "侧壁开窗上颌窦底提升",
+    "category": "surgery",
+    "risk": true,
+    "reading": "さいなすりふと"
+  },
+  {
+    "id": "implant_027",
+    "ja": "ソケットリフト",
+    "en": "crestal approach / transalveolar sinus floor elevation",
+    "zh": "穿牙槽嵴上颌窦底提升",
+    "category": "surgery",
+    "risk": true,
+    "reading": "そけっとりふと"
+  },
+  {
+    "id": "implant_028",
+    "ja": "上顎洞粘膜",
+    "en": "maxillary sinus mucous membrane",
+    "zh": "上颌窦黏膜",
+    "category": "anatomy",
+    "risk": true,
+    "reading": "じょうがくどうねんまく"
+  },
+  {
+    "id": "implant_029",
+    "ja": "シュナイダー膜",
+    "en": "Schneiderian membrane",
+    "zh": "施耐德膜",
+    "category": "anatomy",
+    "risk": true,
+    "note": "正式表現としては上顎洞粘膜を優先",
+    "reading": "しゅないだーまく"
+  },
+  {
+    "id": "implant_030",
+    "ja": "上顎洞穿孔",
+    "en": "sinus perforation",
+    "zh": "上颌窦穿孔",
+    "category": "complication",
+    "risk": true,
+    "reading": "じょうがくどうせんこう"
+  },
+  {
+    "id": "implant_031",
+    "ja": "上顎洞迷入",
+    "en": "displacement into the maxillary sinus",
+    "zh": "误入上颌窦",
+    "category": "complication",
+    "risk": true,
+    "reading": "じょうがくどうめいにゅう"
+  },
+  {
+    "id": "implant_032",
+    "ja": "残存骨高径",
+    "en": "residual bone height",
+    "zh": "剩余骨高度",
+    "category": "anatomy",
+    "risk": true,
+    "reading": "ざんぞんこつこうけい"
+  },
+  {
+    "id": "implant_033",
+    "ja": "骨密度",
+    "en": "bone density",
+    "zh": "骨密度",
+    "category": "anatomy",
+    "risk": true,
+    "reading": "こつみつど"
+  },
+  {
+    "id": "implant_034",
+    "ja": "歯槽骨",
+    "en": "alveolar bone",
+    "zh": "牙槽骨",
+    "category": "anatomy",
+    "risk": false,
+    "reading": "しそうこつ"
+  },
+  {
+    "id": "implant_035",
+    "ja": "歯槽堤",
+    "en": "alveolar ridge",
+    "zh": "牙槽嵴",
+    "category": "anatomy",
+    "risk": false,
+    "reading": "しそうてい"
+  },
+  {
+    "id": "implant_036",
+    "ja": "インプラント周囲炎",
+    "en": "peri-implantitis",
+    "zh": "种植体周围炎",
+    "category": "complication",
+    "risk": false,
+    "reading": "いんぷらんとしゅういえん"
+  },
+  {
+    "id": "implant_037",
+    "ja": "インプラント周囲粘膜炎",
+    "en": "peri-implant mucositis",
+    "zh": "种植体周围黏膜炎",
+    "category": "complication",
+    "risk": false,
+    "reading": "いんぷらんとしゅういねんまくえん"
+  },
+  {
+    "id": "implant_038",
+    "ja": "マイクロギャップ",
+    "en": "microgap",
+    "zh": "微间隙",
+    "category": "prosthetics",
+    "risk": false,
+    "reading": "まいくろぎゃっぷ"
+  },
+  {
+    "id": "implant_039",
+    "ja": "プラットフォームスイッチング",
+    "en": "platform switching",
+    "zh": "平台转移",
+    "category": "prosthetics",
+    "risk": false,
+    "reading": "ぷらっとふぉーむすいっちんぐ"
+  },
+  {
+    "id": "implant_040",
+    "ja": "フラップレスサージェリー",
+    "en": "flapless surgery",
+    "zh": "不翻瓣手术",
+    "category": "surgery",
+    "risk": false,
+    "reading": "ふらっぷれすさーじぇりー"
+  },
+  {
+    "id": "implant_041",
+    "ja": "印象採得",
+    "reading": "いんしょうさいとく",
+    "en": "impression taking",
+    "zh": "取模",
+    "category": "prosthetics",
+    "risk": false
+  },
+  {
+    "id": "implant_042",
+    "ja": "光学印象",
+    "reading": "こうがくいんしょう",
+    "en": "optical impression",
+    "zh": "光学印模",
+    "category": "digital",
+    "risk": false
+  },
+  {
+    "id": "implant_043",
+    "ja": "口腔内スキャナー",
+    "reading": "こうくうないすきゃなー",
+    "en": "intraoral scanner",
+    "zh": "口内扫描仪",
+    "category": "digital",
+    "risk": false
+  },
+  {
+    "id": "implant_044",
+    "ja": "スキャンボディ",
+    "reading": "すきゃんぼでぃ",
+    "en": "scan body",
+    "zh": "扫描杆",
+    "category": "digital",
+    "risk": false
+  },
+  {
+    "id": "implant_045",
+    "ja": "アクセスホール",
+    "reading": "あくせすほーる",
+    "en": "access hole",
+    "zh": "通道孔",
+    "category": "prosthetics",
+    "risk": false
+  },
+  {
+    "id": "implant_046",
+    "ja": "スクリュー固定",
+    "reading": "すくりゅーこてい",
+    "en": "screw-retained restoration",
+    "zh": "螺丝固位",
+    "category": "prosthetics",
     "risk": true
+  },
+  {
+    "id": "implant_047",
+    "ja": "セメント固定",
+    "reading": "せめんとこてい",
+    "en": "cement-retained restoration",
+    "zh": "粘接固位",
+    "category": "prosthetics",
+    "risk": true
+  },
+  {
+    "id": "implant_048",
+    "ja": "プロビジョナルレストレーション",
+    "reading": "ぷろびじょなるれすとれーしょん",
+    "en": "provisional restoration",
+    "zh": "临时修复体",
+    "category": "prosthetics",
+    "risk": false
+  },
+  {
+    "id": "implant_049",
+    "ja": "暫間補綴",
+    "reading": "ざんかんほてつ",
+    "en": "provisional prosthesis",
+    "zh": "临时修复",
+    "category": "prosthetics",
+    "risk": false
+  },
+  {
+    "id": "implant_050",
+    "ja": "印象用コーピング",
+    "reading": "いんしょうようこーぴんぐ",
+    "en": "impression coping",
+    "zh": "印模转移杆",
+    "category": "prosthetics",
+    "risk": false
+  },
+  {
+    "id": "implant_051",
+    "ja": "切開",
+    "reading": "せっかい",
+    "en": "incision",
+    "zh": "切开",
+    "category": "surgery",
+    "risk": true
+  },
+  {
+    "id": "implant_052",
+    "ja": "剥離",
+    "reading": "はくり",
+    "en": "flap elevation / reflection",
+    "zh": "翻瓣剥离",
+    "category": "surgery",
+    "risk": true
+  },
+  {
+    "id": "implant_053",
+    "ja": "縫合",
+    "reading": "ほうごう",
+    "en": "suturing",
+    "zh": "缝合",
+    "category": "surgery",
+    "risk": false
+  },
+  {
+    "id": "implant_054",
+    "ja": "抜歯即時埋入",
+    "reading": "ばっしそくじまいにゅう",
+    "en": "immediate implant placement after extraction",
+    "zh": "拔牙后即刻种植",
+    "category": "surgery",
+    "risk": true
+  },
+  {
+    "id": "implant_055",
+    "ja": "フラップ",
+    "reading": "ふらっぷ",
+    "en": "flap",
+    "zh": "瓣",
+    "category": "surgery",
+    "risk": false
+  },
+  {
+    "id": "implant_056",
+    "ja": "ドリリング",
+    "reading": "どりりんぐ",
+    "en": "drilling",
+    "zh": "备孔",
+    "category": "surgery",
+    "risk": true
+  },
+  {
+    "id": "implant_057",
+    "ja": "パイロットドリル",
+    "reading": "ぱいろっとどりる",
+    "en": "pilot drill",
+    "zh": "先锋钻",
+    "category": "surgery",
+    "risk": false
+  },
+  {
+    "id": "implant_058",
+    "ja": "最終ドリル",
+    "reading": "さいしゅうどりる",
+    "en": "final drill",
+    "zh": "终末钻",
+    "category": "surgery",
+    "risk": false
+  },
+  {
+    "id": "implant_059",
+    "ja": "メンブレン",
+    "reading": "めんぶれん",
+    "en": "membrane",
+    "zh": "屏障膜",
+    "category": "surgery",
+    "risk": false
+  },
+  {
+    "id": "implant_060",
+    "ja": "吸収性膜",
+    "reading": "きゅうしゅうせいまく",
+    "en": "resorbable membrane",
+    "zh": "可吸收膜",
+    "category": "surgery",
+    "risk": false
+  },
+  {
+    "id": "implant_061",
+    "ja": "非吸収性膜",
+    "reading": "ひきゅうしゅうせいまく",
+    "en": "non-resorbable membrane",
+    "zh": "不可吸收膜",
+    "category": "surgery",
+    "risk": false
+  },
+  {
+    "id": "implant_062",
+    "ja": "裂開",
+    "reading": "れっかい",
+    "en": "dehiscence",
+    "zh": "裂开",
+    "category": "complication",
+    "risk": true
+  },
+  {
+    "id": "implant_063",
+    "ja": "開窓",
+    "reading": "かいそう",
+    "en": "fenestration",
+    "zh": "骨开窗",
+    "category": "complication",
+    "risk": true
+  },
+  {
+    "id": "implant_064",
+    "ja": "動揺",
+    "reading": "どうよう",
+    "en": "mobility",
+    "zh": "松动",
+    "category": "complication",
+    "risk": true
+  },
+  {
+    "id": "implant_065",
+    "ja": "スクリュー緩み",
+    "reading": "すくりゅーゆるみ",
+    "en": "screw loosening",
+    "zh": "螺丝松动",
+    "category": "complication",
+    "risk": true
+  },
+  {
+    "id": "implant_066",
+    "ja": "脱落",
+    "reading": "だつらく",
+    "en": "detachment / loss",
+    "zh": "脱落",
+    "category": "complication",
+    "risk": true
+  },
+  {
+    "id": "implant_067",
+    "ja": "感染",
+    "reading": "かんせん",
+    "en": "infection",
+    "zh": "感染",
+    "category": "complication",
+    "risk": true
+  },
+  {
+    "id": "implant_068",
+    "ja": "骨吸収",
+    "reading": "こつきゅうしゅう",
+    "en": "bone resorption",
+    "zh": "骨吸收",
+    "category": "complication",
+    "risk": true
+  },
+  {
+    "id": "implant_069",
+    "ja": "CBCT",
+    "reading": "しーびーしーてぃー",
+    "en": "CBCT",
+    "zh": "CBCT",
+    "category": "digital",
+    "risk": false
+  },
+  {
+    "id": "implant_070",
+    "ja": "CT",
+    "reading": "しーてぃー",
+    "en": "CT",
+    "zh": "CT",
+    "category": "digital",
+    "risk": false
+  },
+  {
+    "id": "implant_071",
+    "ja": "IOS",
+    "reading": "あいおーえす",
+    "en": "intraoral scanner / IOS",
+    "zh": "口内扫描",
+    "category": "digital",
+    "risk": false
+  },
+  {
+    "id": "implant_072",
+    "ja": "ナビゲーション手術",
+    "reading": "なびげーしょんしゅじゅつ",
+    "en": "navigation surgery",
+    "zh": "导航手术",
+    "category": "digital",
+    "risk": false
+  },
+  {
+    "id": "implant_073",
+    "ja": "下歯槽神経",
+    "reading": "かしそうしんけい",
+    "en": "inferior alveolar nerve",
+    "zh": "下牙槽神经",
+    "category": "anatomy",
+    "risk": true
+  },
+  {
+    "id": "implant_074",
+    "ja": "オトガイ孔",
+    "reading": "おとがいこう",
+    "en": "mental foramen",
+    "zh": "颏孔",
+    "category": "anatomy",
+    "risk": true
+  },
+  {
+    "id": "implant_075",
+    "ja": "上顎洞",
+    "reading": "じょうがくどう",
+    "en": "maxillary sinus",
+    "zh": "上颌窦",
+    "category": "anatomy",
+    "risk": true
+  },
+  {
+    "id": "implant_076",
+    "ja": "頬側",
+    "reading": "きょうそく",
+    "en": "buccal side",
+    "zh": "颊侧",
+    "category": "anatomy",
+    "risk": true
+  },
+  {
+    "id": "implant_077",
+    "ja": "舌側",
+    "reading": "ぜっそく",
+    "en": "lingual side",
+    "zh": "舌侧",
+    "category": "anatomy",
+    "risk": true
+  },
+  {
+    "id": "implant_078",
+    "ja": "近心",
+    "reading": "きんしん",
+    "en": "mesial",
+    "zh": "近中",
+    "category": "anatomy",
+    "risk": true
+  },
+  {
+    "id": "implant_079",
+    "ja": "遠心",
+    "reading": "えんしん",
+    "en": "distal",
+    "zh": "远中",
+    "category": "anatomy",
+    "risk": true
+  },
+  {
+    "id": "implant_080",
+    "ja": "唇側",
+    "reading": "しんそく",
+    "en": "labial side",
+    "zh": "唇侧",
+    "category": "anatomy",
+    "risk": true
+  },
+  {
+    "id": "implant_081",
+    "category": "implant",
+    "ja": "インプラントシステム",
+    "reading": "いんぷらんとしすてむ",
+    "en": "implant system",
+    "zh": "种植系统",
+    "risk": false
+  },
+  {
+    "id": "implant_082",
+    "category": "implant",
+    "ja": "インプラントフィクスチャー",
+    "reading": "いんぷらんとふぃくすちゃー",
+    "en": "implant fixture",
+    "zh": "种植体",
+    "risk": false
+  },
+  {
+    "id": "implant_083",
+    "category": "implant",
+    "ja": "フィクスチャー",
+    "reading": "ふぃくすちゃー",
+    "en": "fixture",
+    "zh": "种植体",
+    "risk": false
+  },
+  {
+    "id": "implant_084",
+    "category": "implant",
+    "ja": "ワンピースインプラント",
+    "reading": "わんぴーすいんぷらんと",
+    "en": "one-piece implant",
+    "zh": "一段式种植体",
+    "risk": false
+  },
+  {
+    "id": "implant_085",
+    "category": "implant",
+    "ja": "ツーピースインプラント",
+    "reading": "つーぴーすいんぷらんと",
+    "en": "two-piece implant",
+    "zh": "两段式种植体",
+    "risk": false
+  },
+  {
+    "id": "implant_086",
+    "category": "implant",
+    "ja": "テーパードインプラント",
+    "reading": "てーぱーどいんぷらんと",
+    "en": "tapered implant",
+    "zh": "锥形种植体",
+    "risk": false
+  },
+  {
+    "id": "implant_087",
+    "category": "implant",
+    "ja": "ストレートインプラント",
+    "reading": "すとれーといんぷらんと",
+    "en": "straight implant",
+    "zh": "直柱形种植体",
+    "risk": false
+  },
+  {
+    "id": "implant_088",
+    "category": "implant",
+    "ja": "ショートインプラント",
+    "reading": "しょーといんぷらんと",
+    "en": "short implant",
+    "zh": "短种植体",
+    "risk": true
+  },
+  {
+    "id": "implant_089",
+    "category": "implant",
+    "ja": "ナローインプラント",
+    "reading": "なろーいんぷらんと",
+    "en": "narrow implant",
+    "zh": "窄种植体",
+    "risk": true
+  },
+  {
+    "id": "implant_090",
+    "category": "implant",
+    "ja": "ワイドインプラント",
+    "reading": "わいどいんぷらんと",
+    "en": "wide implant",
+    "zh": "宽种植体",
+    "risk": true
+  },
+  {
+    "id": "implant_091",
+    "category": "implant",
+    "ja": "インプラント直径",
+    "reading": "いんぷらんとちょっけい",
+    "en": "implant diameter",
+    "zh": "种植体直径",
+    "risk": true
+  },
+  {
+    "id": "implant_092",
+    "category": "implant",
+    "ja": "インプラント長径",
+    "reading": "いんぷらんとちょうけい",
+    "en": "implant length",
+    "zh": "种植体长度",
+    "risk": true
+  },
+  {
+    "id": "implant_093",
+    "category": "implant",
+    "ja": "インプラント表面性状",
+    "reading": "いんぷらんとひょうめんせいじょう",
+    "en": "implant surface characteristics",
+    "zh": "种植体表面特性",
+    "risk": false
+  },
+  {
+    "id": "implant_094",
+    "category": "implant",
+    "ja": "粗面",
+    "reading": "そめん",
+    "en": "rough surface",
+    "zh": "粗糙表面",
+    "risk": false
+  },
+  {
+    "id": "implant_095",
+    "category": "implant",
+    "ja": "機械研磨面",
+    "reading": "きかいけんまめん",
+    "en": "machined surface",
+    "zh": "机械加工表面",
+    "risk": false
+  },
+  {
+    "id": "implant_096",
+    "category": "implant",
+    "ja": "親水性表面",
+    "reading": "しんすいせいひょうめん",
+    "en": "hydrophilic surface",
+    "zh": "亲水表面",
+    "risk": false
+  },
+  {
+    "id": "implant_097",
+    "category": "implant",
+    "ja": "チタン",
+    "reading": "ちたん",
+    "en": "titanium",
+    "zh": "钛",
+    "risk": false
+  },
+  {
+    "id": "implant_098",
+    "category": "implant",
+    "ja": "チタン合金",
+    "reading": "ちたんごうきん",
+    "en": "titanium alloy",
+    "zh": "钛合金",
+    "risk": false
+  },
+  {
+    "id": "implant_099",
+    "category": "implant",
+    "ja": "ジルコニアインプラント",
+    "reading": "じるこにあいんぷらんと",
+    "en": "zirconia implant",
+    "zh": "氧化锆种植体",
+    "risk": false
+  },
+  {
+    "id": "implant_100",
+    "category": "implant",
+    "ja": "プラットフォーム",
+    "reading": "ぷらっとふぉーむ",
+    "en": "platform",
+    "zh": "平台",
+    "risk": false
+  },
+  {
+    "id": "implant_101",
+    "category": "implant",
+    "ja": "コネクション",
+    "reading": "こねくしょん",
+    "en": "connection",
+    "zh": "连接",
+    "risk": false
+  },
+  {
+    "id": "implant_102",
+    "category": "implant",
+    "ja": "インターナルコネクション",
+    "reading": "いんたーなるこねくしょん",
+    "en": "internal connection",
+    "zh": "内连接",
+    "risk": false
+  },
+  {
+    "id": "implant_103",
+    "category": "implant",
+    "ja": "エクスターナルコネクション",
+    "reading": "えくすたーなるこねくしょん",
+    "en": "external connection",
+    "zh": "外连接",
+    "risk": false
+  },
+  {
+    "id": "implant_104",
+    "category": "implant",
+    "ja": "モーステーパー",
+    "reading": "もーすてーぱー",
+    "en": "Morse taper",
+    "zh": "莫氏锥度",
+    "risk": false
+  },
+  {
+    "id": "implant_105",
+    "category": "implant",
+    "ja": "インプラントアナログ",
+    "reading": "いんぷらんとあなろぐ",
+    "en": "implant analog",
+    "zh": "种植体替代体",
+    "risk": false
+  },
+  {
+    "id": "surgery_002",
+    "category": "surgery",
+    "ja": "術前診査",
+    "reading": "じゅつぜんしんさ",
+    "en": "preoperative examination",
+    "zh": "术前检查",
+    "risk": false
+  },
+  {
+    "id": "surgery_003",
+    "category": "surgery",
+    "ja": "術前診断",
+    "reading": "じゅつぜんしんだん",
+    "en": "preoperative diagnosis",
+    "zh": "术前诊断",
+    "risk": true
+  },
+  {
+    "id": "surgery_004",
+    "category": "surgery",
+    "ja": "治療計画",
+    "reading": "ちりょうけいかく",
+    "en": "treatment planning",
+    "zh": "治疗计划",
+    "risk": true
+  },
+  {
+    "id": "surgery_005",
+    "category": "surgery",
+    "ja": "埋入計画",
+    "reading": "まいにゅうけいかく",
+    "en": "implant placement planning",
+    "zh": "种植计划",
+    "risk": true
+  },
+  {
+    "id": "surgery_006",
+    "category": "surgery",
+    "ja": "埋入位置",
+    "reading": "まいにゅういち",
+    "en": "implant position",
+    "zh": "种植位置",
+    "risk": true
+  },
+  {
+    "id": "surgery_007",
+    "category": "surgery",
+    "ja": "埋入深度",
+    "reading": "まいにゅうしんど",
+    "en": "implant placement depth",
+    "zh": "植入深度",
+    "risk": true
+  },
+  {
+    "id": "surgery_008",
+    "category": "surgery",
+    "ja": "埋入角度",
+    "reading": "まいにゅうかくど",
+    "en": "implant angulation",
+    "zh": "植入角度",
+    "risk": true
+  },
+  {
+    "id": "surgery_009",
+    "category": "surgery",
+    "ja": "補綴主導",
+    "reading": "ほてつしゅどう",
+    "en": "prosthetically driven",
+    "zh": "修复导向",
+    "risk": false
+  },
+  {
+    "id": "surgery_010",
+    "category": "surgery",
+    "ja": "トップダウントリートメント",
+    "reading": "とっぷだうんとりーとめんと",
+    "en": "top-down treatment",
+    "zh": "自上而下治疗",
+    "risk": false
+  },
+  {
+    "id": "surgery_011",
+    "category": "surgery",
+    "ja": "安全域",
+    "reading": "あんぜんいき",
+    "en": "safety zone",
+    "zh": "安全区",
+    "risk": true
+  },
+  {
+    "id": "surgery_012",
+    "category": "surgery",
+    "ja": "抜歯窩",
+    "reading": "ばっしか",
+    "en": "extraction socket",
+    "zh": "拔牙窝",
+    "risk": false
+  },
+  {
+    "id": "surgery_013",
+    "category": "surgery",
+    "ja": "新鮮抜歯窩",
+    "reading": "しんせんばっしか",
+    "en": "fresh extraction socket",
+    "zh": "新鲜拔牙窝",
+    "risk": false
+  },
+  {
+    "id": "surgery_014",
+    "category": "surgery",
+    "ja": "ソケットプリザベーション",
+    "reading": "そけっとぷりざべーしょん",
+    "en": "socket preservation",
+    "zh": "拔牙窝保存",
+    "risk": false
+  },
+  {
+    "id": "surgery_015",
+    "category": "surgery",
+    "ja": "リッジプリザベーション",
+    "reading": "りっじぷりざべーしょん",
+    "en": "ridge preservation",
+    "zh": "牙槽嵴保存",
+    "risk": false
+  },
+  {
+    "id": "surgery_016",
+    "category": "surgery",
+    "ja": "低侵襲",
+    "reading": "ていしんしゅう",
+    "en": "minimally invasive",
+    "zh": "微创",
+    "risk": false
+  },
+  {
+    "id": "surgery_017",
+    "category": "surgery",
+    "ja": "全層弁",
+    "reading": "ぜんそうべん",
+    "en": "full-thickness flap",
+    "zh": "全厚瓣",
+    "risk": false
+  },
+  {
+    "id": "surgery_018",
+    "category": "surgery",
+    "ja": "部分層弁",
+    "reading": "ぶぶんそうべん",
+    "en": "partial-thickness flap",
+    "zh": "半厚瓣",
+    "risk": false
+  },
+  {
+    "id": "surgery_019",
+    "category": "surgery",
+    "ja": "歯肉切開",
+    "reading": "しにくせっかい",
+    "en": "gingival incision",
+    "zh": "牙龈切开",
+    "risk": true
+  },
+  {
+    "id": "surgery_020",
+    "category": "surgery",
+    "ja": "縦切開",
+    "reading": "じゅうせっかい",
+    "en": "vertical incision",
+    "zh": "纵切口",
+    "risk": true
+  },
+  {
+    "id": "surgery_021",
+    "category": "surgery",
+    "ja": "減張切開",
+    "reading": "げんちょうせっかい",
+    "en": "releasing incision",
+    "zh": "减张切口",
+    "risk": true
+  },
+  {
+    "id": "surgery_022",
+    "category": "surgery",
+    "ja": "骨膜減張切開",
+    "reading": "こつまくげんちょうせっかい",
+    "en": "periosteal releasing incision",
+    "zh": "骨膜减张切口",
+    "risk": true
+  },
+  {
+    "id": "surgery_023",
+    "category": "surgery",
+    "ja": "粘膜骨膜弁",
+    "reading": "ねんまくこつまくべん",
+    "en": "mucoperiosteal flap",
+    "zh": "黏骨膜瓣",
+    "risk": false
+  },
+  {
+    "id": "surgery_024",
+    "category": "surgery",
+    "ja": "骨切削",
+    "reading": "こつせっさく",
+    "en": "bone drilling / osteotomy",
+    "zh": "骨切削",
+    "risk": true
+  },
+  {
+    "id": "surgery_025",
+    "category": "surgery",
+    "ja": "注水",
+    "reading": "ちゅうすい",
+    "en": "irrigation",
+    "zh": "冲洗",
+    "risk": false
+  },
+  {
+    "id": "surgery_026",
+    "category": "surgery",
+    "ja": "発熱",
+    "reading": "はつねつ",
+    "en": "heat generation",
+    "zh": "产热",
+    "risk": true
+  },
+  {
+    "id": "surgery_027",
+    "category": "surgery",
+    "ja": "オーバーヒート",
+    "reading": "おーばーひーと",
+    "en": "overheating",
+    "zh": "过热",
+    "risk": true
+  },
+  {
+    "id": "surgery_028",
+    "category": "surgery",
+    "ja": "タッピング",
+    "reading": "たっぴんぐ",
+    "en": "tapping",
+    "zh": "攻丝",
+    "risk": false
+  },
+  {
+    "id": "surgery_029",
+    "category": "surgery",
+    "ja": "カウンターシンク",
+    "reading": "かうんたーしんく",
+    "en": "countersink",
+    "zh": "扩颈钻",
+    "risk": false
+  },
+  {
+    "id": "surgery_030",
+    "category": "surgery",
+    "ja": "骨質",
+    "reading": "こつしつ",
+    "en": "bone quality",
+    "zh": "骨质",
+    "risk": true
+  },
+  {
+    "id": "surgery_031",
+    "category": "surgery",
+    "ja": "骨量",
+    "reading": "こつりょう",
+    "en": "bone volume",
+    "zh": "骨量",
+    "risk": true
+  },
+  {
+    "id": "surgery_032",
+    "category": "surgery",
+    "ja": "骨幅",
+    "reading": "こつはば",
+    "en": "bone width",
+    "zh": "骨宽度",
+    "risk": true
+  },
+  {
+    "id": "surgery_033",
+    "category": "surgery",
+    "ja": "骨高径",
+    "reading": "こつこうけい",
+    "en": "bone height",
+    "zh": "骨高度",
+    "risk": true
+  },
+  {
+    "id": "surgery_034",
+    "category": "surgery",
+    "ja": "皮質骨",
+    "reading": "ひしつこつ",
+    "en": "cortical bone",
+    "zh": "皮质骨",
+    "risk": true
+  },
+  {
+    "id": "surgery_035",
+    "category": "surgery",
+    "ja": "海綿骨",
+    "reading": "かいめんこつ",
+    "en": "cancellous bone",
+    "zh": "松质骨",
+    "risk": true
+  },
+  {
+    "id": "surgery_036",
+    "category": "surgery",
+    "ja": "硬骨",
+    "reading": "こうこつ",
+    "en": "dense bone",
+    "zh": "致密骨",
+    "risk": true
+  },
+  {
+    "id": "surgery_037",
+    "category": "surgery",
+    "ja": "軟骨",
+    "reading": "なんこつ",
+    "en": "soft bone",
+    "zh": "软骨质",
+    "risk": true
+  },
+  {
+    "id": "surgery_038",
+    "category": "surgery",
+    "ja": "ドリリングシークエンス",
+    "reading": "どりりんぐしーくえんす",
+    "en": "drilling sequence",
+    "zh": "备孔顺序",
+    "risk": true
+  },
+  {
+    "id": "surgery_039",
+    "category": "surgery",
+    "ja": "アンダープリパレーション",
+    "reading": "あんだーぷりぱれーしょん",
+    "en": "underpreparation",
+    "zh": "欠预备",
+    "risk": true
+  },
+  {
+    "id": "surgery_040",
+    "category": "surgery",
+    "ja": "オーバープリパレーション",
+    "reading": "おーばーぷりぱれーしょん",
+    "en": "overpreparation",
+    "zh": "过度预备",
+    "risk": true
+  },
+  {
+    "id": "surgery_041",
+    "category": "surgery",
+    "ja": "骨圧縮",
+    "reading": "こつあっしゅく",
+    "en": "bone condensation",
+    "zh": "骨压缩",
+    "risk": true
+  },
+  {
+    "id": "surgery_042",
+    "category": "surgery",
+    "ja": "オステオトーム",
+    "reading": "おすておとーむ",
+    "en": "osteotome",
+    "zh": "骨凿",
+    "risk": false
+  },
+  {
+    "id": "surgery_043",
+    "category": "surgery",
+    "ja": "初期閉鎖",
+    "reading": "しょきへいさ",
+    "en": "primary closure",
+    "zh": "一期关闭",
+    "risk": false
+  },
+  {
+    "id": "surgery_044",
+    "category": "surgery",
+    "ja": "二次手術",
+    "reading": "にじしゅじゅつ",
+    "en": "second-stage surgery",
+    "zh": "二期手术",
+    "risk": false
+  },
+  {
+    "id": "surgery_045",
+    "category": "surgery",
+    "ja": "ヒーリングアバットメント",
+    "reading": "ひーりんぐあばっとめんと",
+    "en": "healing abutment",
+    "zh": "愈合基台",
+    "risk": false
+  },
+  {
+    "id": "surgery_046",
+    "category": "surgery",
+    "ja": "カバースクリュー",
+    "reading": "かばーすくりゅー",
+    "en": "cover screw",
+    "zh": "覆盖螺丝",
+    "risk": false
+  },
+  {
+    "id": "surgery_047",
+    "category": "surgery",
+    "ja": "一回法",
+    "reading": "いっかいほう",
+    "en": "one-stage protocol",
+    "zh": "一期法",
+    "risk": false
+  },
+  {
+    "id": "surgery_048",
+    "category": "surgery",
+    "ja": "二回法",
+    "reading": "にかいほう",
+    "en": "two-stage protocol",
+    "zh": "二期法",
+    "risk": false
+  },
+  {
+    "id": "bone_001",
+    "category": "bone",
+    "ja": "水平的骨造成",
+    "reading": "すいへいてきこつぞうせい",
+    "en": "horizontal bone augmentation",
+    "zh": "水平骨增量",
+    "risk": false
+  },
+  {
+    "id": "bone_002",
+    "category": "bone",
+    "ja": "垂直的骨造成",
+    "reading": "すいちょくてきこつぞうせい",
+    "en": "vertical bone augmentation",
+    "zh": "垂直骨增量",
+    "risk": true
+  },
+  {
+    "id": "bone_003",
+    "category": "bone",
+    "ja": "水平的骨欠損",
+    "reading": "すいへいてきこつけっそん",
+    "en": "horizontal bone defect",
+    "zh": "水平骨缺损",
+    "risk": true
+  },
+  {
+    "id": "bone_004",
+    "category": "bone",
+    "ja": "垂直的骨欠損",
+    "reading": "すいちょくてきこつけっそん",
+    "en": "vertical bone defect",
+    "zh": "垂直骨缺损",
+    "risk": true
+  },
+  {
+    "id": "bone_005",
+    "category": "bone",
+    "ja": "骨欠損",
+    "reading": "こつけっそん",
+    "en": "bone defect",
+    "zh": "骨缺损",
+    "risk": true
+  },
+  {
+    "id": "bone_006",
+    "category": "bone",
+    "ja": "骨移植",
+    "reading": "こついしょく",
+    "en": "bone grafting",
+    "zh": "骨移植",
+    "risk": false
+  },
+  {
+    "id": "bone_007",
+    "category": "bone",
+    "ja": "ブロック骨移植",
+    "reading": "ぶろっくこついしょく",
+    "en": "block bone graft",
+    "zh": "块状骨移植",
+    "risk": false
+  },
+  {
+    "id": "bone_008",
+    "category": "bone",
+    "ja": "粉砕骨",
+    "reading": "ふんさいこつ",
+    "en": "particulate bone",
+    "zh": "颗粒骨",
+    "risk": false
+  },
+  {
+    "id": "bone_009",
+    "category": "bone",
+    "ja": "骨片",
+    "reading": "こっぺん",
+    "en": "bone fragment",
+    "zh": "骨片",
+    "risk": false
+  },
+  {
+    "id": "bone_010",
+    "category": "bone",
+    "ja": "骨採取",
+    "reading": "こつさいしゅ",
+    "en": "bone harvesting",
+    "zh": "取骨",
+    "risk": false
+  },
+  {
+    "id": "bone_011",
+    "category": "bone",
+    "ja": "骨採取部位",
+    "reading": "こつさいしゅぶい",
+    "en": "bone harvesting site",
+    "zh": "取骨部位",
+    "risk": true
+  },
+  {
+    "id": "bone_012",
+    "category": "bone",
+    "ja": "腸骨",
+    "reading": "ちょうこつ",
+    "en": "iliac bone",
+    "zh": "髂骨",
+    "risk": true
+  },
+  {
+    "id": "bone_013",
+    "category": "bone",
+    "ja": "下顎枝",
+    "reading": "かがくし",
+    "en": "mandibular ramus",
+    "zh": "下颌升支",
+    "risk": true
+  },
+  {
+    "id": "bone_014",
+    "category": "bone",
+    "ja": "オトガイ部",
+    "reading": "おとがいぶ",
+    "en": "chin region",
+    "zh": "颏部",
+    "risk": true
+  },
+  {
+    "id": "bone_015",
+    "category": "bone",
+    "ja": "骨スクレーパー",
+    "reading": "こつすくれーぱー",
+    "en": "bone scraper",
+    "zh": "刮骨器",
+    "risk": false
+  },
+  {
+    "id": "bone_016",
+    "category": "bone",
+    "ja": "骨ミル",
+    "reading": "こつみる",
+    "en": "bone mill",
+    "zh": "骨磨",
+    "risk": false
+  },
+  {
+    "id": "bone_017",
+    "category": "bone",
+    "ja": "骨膜",
+    "reading": "こつまく",
+    "en": "periosteum",
+    "zh": "骨膜",
+    "risk": true
+  },
+  {
+    "id": "bone_018",
+    "category": "bone",
+    "ja": "骨形成",
+    "reading": "こつけいせい",
+    "en": "bone formation",
+    "zh": "骨形成",
+    "risk": false
+  },
+  {
+    "id": "bone_019",
+    "category": "bone",
+    "ja": "骨伝導",
+    "reading": "こつでんどう",
+    "en": "osteoconduction",
+    "zh": "骨传导",
+    "risk": false
+  },
+  {
+    "id": "bone_020",
+    "category": "bone",
+    "ja": "骨誘導",
+    "reading": "こつゆうどう",
+    "en": "osteoinduction",
+    "zh": "骨诱导",
+    "risk": false
+  },
+  {
+    "id": "bone_021",
+    "category": "bone",
+    "ja": "骨置換",
+    "reading": "こつちかん",
+    "en": "bone substitution",
+    "zh": "骨替代",
+    "risk": false
+  },
+  {
+    "id": "bone_022",
+    "category": "bone",
+    "ja": "骨成熟",
+    "reading": "こつせいじゅく",
+    "en": "bone maturation",
+    "zh": "骨成熟",
+    "risk": false
+  },
+  {
+    "id": "bone_023",
+    "category": "bone",
+    "ja": "骨リモデリング",
+    "reading": "こつりもでりんぐ",
+    "en": "bone remodeling",
+    "zh": "骨重建",
+    "risk": false
+  },
+  {
+    "id": "bone_024",
+    "category": "bone",
+    "ja": "メンブレン固定",
+    "reading": "めんぶれんこてい",
+    "en": "membrane fixation",
+    "zh": "屏障膜固定",
+    "risk": false
+  },
+  {
+    "id": "bone_025",
+    "category": "bone",
+    "ja": "固定スクリュー",
+    "reading": "こていすくりゅー",
+    "en": "fixation screw",
+    "zh": "固定螺钉",
+    "risk": false
+  },
+  {
+    "id": "bone_026",
+    "category": "bone",
+    "ja": "チタンメッシュ",
+    "reading": "ちたんめっしゅ",
+    "en": "titanium mesh",
+    "zh": "钛网",
+    "risk": false
+  },
+  {
+    "id": "bone_027",
+    "category": "bone",
+    "ja": "ピン固定",
+    "reading": "ぴんこてい",
+    "en": "pin fixation",
+    "zh": "钉固定",
+    "risk": false
+  },
+  {
+    "id": "bone_028",
+    "category": "bone",
+    "ja": "スペースメイキング",
+    "reading": "すぺーすめいきんぐ",
+    "en": "space making",
+    "zh": "空间维持",
+    "risk": false
+  },
+  {
+    "id": "bone_029",
+    "category": "bone",
+    "ja": "遮蔽膜",
+    "reading": "しゃへいまく",
+    "en": "barrier membrane",
+    "zh": "屏障膜",
+    "risk": false
+  },
+  {
+    "id": "bone_030",
+    "category": "bone",
+    "ja": "コラーゲン膜",
+    "reading": "こらーげんまく",
+    "en": "collagen membrane",
+    "zh": "胶原膜",
+    "risk": false
+  },
+  {
+    "id": "sinus_001",
+    "category": "sinus",
+    "ja": "上顎洞底",
+    "reading": "じょうがくどうてい",
+    "en": "maxillary sinus floor",
+    "zh": "上颌窦底",
+    "risk": true
+  },
+  {
+    "id": "sinus_002",
+    "category": "sinus",
+    "ja": "上顎洞側壁",
+    "reading": "じょうがくどうそくへき",
+    "en": "lateral wall of maxillary sinus",
+    "zh": "上颌窦侧壁",
+    "risk": true
+  },
+  {
+    "id": "sinus_003",
+    "category": "sinus",
+    "ja": "ラテラルアプローチ",
+    "reading": "らてらるあぷろーち",
+    "en": "lateral approach",
+    "zh": "侧壁入路",
+    "risk": true
+  },
+  {
+    "id": "sinus_004",
+    "category": "sinus",
+    "ja": "クレスタルアプローチ",
+    "reading": "くれすたるあぷろーち",
+    "en": "crestal approach",
+    "zh": "牙槽嵴顶入路",
+    "risk": true
+  },
+  {
+    "id": "sinus_005",
+    "category": "sinus",
+    "ja": "上顎洞隔壁",
+    "reading": "じょうがくどうかくへき",
+    "en": "sinus septum",
+    "zh": "上颌窦隔",
+    "risk": true
+  },
+  {
+    "id": "sinus_006",
+    "category": "sinus",
+    "ja": "上顎洞炎",
+    "reading": "じょうがくどうえん",
+    "en": "maxillary sinusitis",
+    "zh": "上颌窦炎",
+    "risk": true
+  },
+  {
+    "id": "sinus_007",
+    "category": "sinus",
+    "ja": "洞粘膜挙上",
+    "reading": "どうねんまくきょじょう",
+    "en": "sinus membrane elevation",
+    "zh": "窦黏膜提升",
+    "risk": true
+  },
+  {
+    "id": "sinus_008",
+    "category": "sinus",
+    "ja": "洞底骨",
+    "reading": "どうていこつ",
+    "en": "sinus floor bone",
+    "zh": "窦底骨",
+    "risk": true
+  },
+  {
+    "id": "sinus_009",
+    "category": "sinus",
+    "ja": "側方開窓",
+    "reading": "そくほうかいそう",
+    "en": "lateral window",
+    "zh": "侧壁开窗",
+    "risk": true
+  },
+  {
+    "id": "sinus_010",
+    "category": "sinus",
+    "ja": "骨窓",
+    "reading": "こつそう",
+    "en": "bony window",
+    "zh": "骨窗",
+    "risk": true
+  },
+  {
+    "id": "sinus_011",
+    "category": "sinus",
+    "ja": "洞内迷入",
+    "reading": "どうないめいにゅう",
+    "en": "displacement into the sinus",
+    "zh": "误入窦腔",
+    "risk": true
+  },
+  {
+    "id": "soft_001",
+    "category": "soft",
+    "ja": "角化粘膜",
+    "reading": "かくかねんまく",
+    "en": "keratinized mucosa",
+    "zh": "角化黏膜",
+    "risk": false
+  },
+  {
+    "id": "soft_002",
+    "category": "soft",
+    "ja": "付着歯肉",
+    "reading": "ふちゃくしにく",
+    "en": "attached gingiva",
+    "zh": "附着龈",
+    "risk": false
+  },
+  {
+    "id": "soft_003",
+    "category": "soft",
+    "ja": "可動粘膜",
+    "reading": "かどうねんまく",
+    "en": "movable mucosa",
+    "zh": "可动黏膜",
+    "risk": false
+  },
+  {
+    "id": "soft_004",
+    "category": "soft",
+    "ja": "粘膜厚径",
+    "reading": "ねんまくこうけい",
+    "en": "mucosal thickness",
+    "zh": "黏膜厚度",
+    "risk": true
+  },
+  {
+    "id": "soft_005",
+    "category": "soft",
+    "ja": "軟組織",
+    "reading": "なんそしき",
+    "en": "soft tissue",
+    "zh": "软组织",
+    "risk": false
+  },
+  {
+    "id": "soft_006",
+    "category": "soft",
+    "ja": "軟組織移植",
+    "reading": "なんそしきいしょく",
+    "en": "soft tissue graft",
+    "zh": "软组织移植",
+    "risk": false
+  },
+  {
+    "id": "soft_007",
+    "category": "soft",
+    "ja": "結合組織移植",
+    "reading": "けつごうそしきいしょく",
+    "en": "connective tissue graft",
+    "zh": "结缔组织移植",
+    "risk": false
+  },
+  {
+    "id": "soft_008",
+    "category": "soft",
+    "ja": "遊離歯肉移植",
+    "reading": "ゆうりしにくいしょく",
+    "en": "free gingival graft",
+    "zh": "游离龈移植",
+    "risk": false
+  },
+  {
+    "id": "soft_009",
+    "category": "soft",
+    "ja": "歯肉増大術",
+    "reading": "しにくぞうだいじゅつ",
+    "en": "gingival augmentation",
+    "zh": "牙龈增量术",
+    "risk": false
+  },
+  {
+    "id": "soft_010",
+    "category": "soft",
+    "ja": "歯肉退縮",
+    "reading": "しにくたいしゅく",
+    "en": "gingival recession",
+    "zh": "牙龈退缩",
+    "risk": true
+  },
+  {
+    "id": "soft_011",
+    "category": "soft",
+    "ja": "粘膜貫通部",
+    "reading": "ねんまくかんつうぶ",
+    "en": "transmucosal area",
+    "zh": "穿黏膜区域",
+    "risk": false
+  },
+  {
+    "id": "soft_012",
+    "category": "soft",
+    "ja": "エマージェンスプロファイル",
+    "reading": "えまーじぇんすぷろふぁいる",
+    "en": "emergence profile",
+    "zh": "穿龈轮廓",
+    "risk": false
+  },
+  {
+    "id": "soft_013",
+    "category": "soft",
+    "ja": "歯肉縁",
+    "reading": "しにくえん",
+    "en": "gingival margin",
+    "zh": "龈缘",
+    "risk": true
+  },
+  {
+    "id": "soft_014",
+    "category": "soft",
+    "ja": "歯間乳頭",
+    "reading": "しかんにゅうとう",
+    "en": "interdental papilla",
+    "zh": "牙间乳头",
+    "risk": false
+  },
+  {
+    "id": "soft_015",
+    "category": "soft",
+    "ja": "乳頭再建",
+    "reading": "にゅうとうさいけん",
+    "en": "papilla reconstruction",
+    "zh": "乳头重建",
+    "risk": false
+  },
+  {
+    "id": "soft_016",
+    "category": "soft",
+    "ja": "創傷治癒",
+    "reading": "そうしょうちゆ",
+    "en": "wound healing",
+    "zh": "创伤愈合",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_002",
+    "category": "prosthetics",
+    "ja": "補綴装置",
+    "reading": "ほてつそうち",
+    "en": "prosthetic appliance",
+    "zh": "修复装置",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_003",
+    "category": "prosthetics",
+    "ja": "上部構造装着",
+    "reading": "じょうぶこうぞうそうちゃく",
+    "en": "superstructure delivery",
+    "zh": "上部结构戴入",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_004",
+    "category": "prosthetics",
+    "ja": "最終補綴",
+    "reading": "さいしゅうほてつ",
+    "en": "final prosthesis",
+    "zh": "最终修复",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_005",
+    "category": "prosthetics",
+    "ja": "単冠",
+    "reading": "たんかん",
+    "en": "single crown",
+    "zh": "单冠",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_006",
+    "category": "prosthetics",
+    "ja": "ブリッジ",
+    "reading": "ぶりっじ",
+    "en": "bridge",
+    "zh": "桥",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_007",
+    "category": "prosthetics",
+    "ja": "インプラントブリッジ",
+    "reading": "いんぷらんとぶりっじ",
+    "en": "implant bridge",
+    "zh": "种植桥",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_008",
+    "category": "prosthetics",
+    "ja": "オーバーデンチャー",
+    "reading": "おーばーでんちゃー",
+    "en": "overdenture",
+    "zh": "覆盖义齿",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_009",
+    "category": "prosthetics",
+    "ja": "アタッチメント",
+    "reading": "あたっちめんと",
+    "en": "attachment",
+    "zh": "附着体",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_010",
+    "category": "prosthetics",
+    "ja": "ロケーター",
+    "reading": "ろけーたー",
+    "en": "locator attachment",
+    "zh": "Locator附着体",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_011",
+    "category": "prosthetics",
+    "ja": "バーアタッチメント",
+    "reading": "ばーあたっちめんと",
+    "en": "bar attachment",
+    "zh": "杆卡附着体",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_012",
+    "category": "prosthetics",
+    "ja": "ボールアタッチメント",
+    "reading": "ぼーるあたっちめんと",
+    "en": "ball attachment",
+    "zh": "球帽附着体",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_013",
+    "category": "prosthetics",
+    "ja": "印象ポスト",
+    "reading": "いんしょうぽすと",
+    "en": "impression post",
+    "zh": "印模杆",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_014",
+    "category": "prosthetics",
+    "ja": "オープントレー法",
+    "reading": "おーぷんとれーほう",
+    "en": "open tray technique",
+    "zh": "开窗托盘法",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_015",
+    "category": "prosthetics",
+    "ja": "クローズドトレー法",
+    "reading": "くろーずどとれーほう",
+    "en": "closed tray technique",
+    "zh": "闭口托盘法",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_016",
+    "category": "prosthetics",
+    "ja": "咬合採得",
+    "reading": "こうごうさいとく",
+    "en": "bite registration",
+    "zh": "咬合记录",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_017",
+    "category": "prosthetics",
+    "ja": "咬合高径",
+    "reading": "こうごうこうけい",
+    "en": "vertical dimension of occlusion",
+    "zh": "咬合垂直距离",
+    "risk": true
+  },
+  {
+    "id": "prosthetics_018",
+    "category": "prosthetics",
+    "ja": "上部構造設計",
+    "reading": "じょうぶこうぞうせっけい",
+    "en": "superstructure design",
+    "zh": "上部结构设计",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_019",
+    "category": "prosthetics",
+    "ja": "カスタムアバットメント",
+    "reading": "かすたむあばっとめんと",
+    "en": "custom abutment",
+    "zh": "个性化基台",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_020",
+    "category": "prosthetics",
+    "ja": "既製アバットメント",
+    "reading": "きせいあばっとめんと",
+    "en": "prefabricated abutment",
+    "zh": "预成基台",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_021",
+    "category": "prosthetics",
+    "ja": "チタンベース",
+    "reading": "ちたんべーす",
+    "en": "titanium base",
+    "zh": "钛基底",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_022",
+    "category": "prosthetics",
+    "ja": "セメントリテイン",
+    "reading": "せめんとりていん",
+    "en": "cement-retained",
+    "zh": "粘接固位",
+    "risk": true
+  },
+  {
+    "id": "prosthetics_023",
+    "category": "prosthetics",
+    "ja": "スクリューリテイン",
+    "reading": "すくりゅーりていん",
+    "en": "screw-retained",
+    "zh": "螺丝固位",
+    "risk": true
+  },
+  {
+    "id": "prosthetics_024",
+    "category": "prosthetics",
+    "ja": "余剰セメント",
+    "reading": "よじょうせめんと",
+    "en": "excess cement",
+    "zh": "多余粘接剂",
+    "risk": true
+  },
+  {
+    "id": "prosthetics_025",
+    "category": "prosthetics",
+    "ja": "締結トルク",
+    "reading": "ていけつとるく",
+    "en": "tightening torque",
+    "zh": "拧紧扭矩",
+    "risk": true
+  },
+  {
+    "id": "prosthetics_026",
+    "category": "prosthetics",
+    "ja": "トルクレンチ",
+    "reading": "とるくれんち",
+    "en": "torque wrench",
+    "zh": "扭矩扳手",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_027",
+    "category": "prosthetics",
+    "ja": "仮締め",
+    "reading": "かりじめ",
+    "en": "provisional tightening",
+    "zh": "临时拧紧",
+    "risk": false
+  },
+  {
+    "id": "prosthetics_028",
+    "category": "prosthetics",
+    "ja": "本締め",
+    "reading": "ほんじめ",
+    "en": "final tightening",
+    "zh": "最终拧紧",
+    "risk": true
+  },
+  {
+    "id": "prosthetics_029",
+    "category": "prosthetics",
+    "ja": "再締結",
+    "reading": "さいていけつ",
+    "en": "retightening",
+    "zh": "再次拧紧",
+    "risk": false
+  },
+  {
+    "id": "occlusion_001",
+    "category": "occlusion",
+    "ja": "咬合",
+    "reading": "こうごう",
+    "en": "occlusion",
+    "zh": "咬合",
+    "risk": true
+  },
+  {
+    "id": "occlusion_002",
+    "category": "occlusion",
+    "ja": "咬合接触",
+    "reading": "こうごうせっしょく",
+    "en": "occlusal contact",
+    "zh": "咬合接触",
+    "risk": true
+  },
+  {
+    "id": "occlusion_003",
+    "category": "occlusion",
+    "ja": "早期接触",
+    "reading": "そうきせっしょく",
+    "en": "premature contact",
+    "zh": "早接触",
+    "risk": true
+  },
+  {
+    "id": "occlusion_004",
+    "category": "occlusion",
+    "ja": "咬合干渉",
+    "reading": "こうごうかんしょう",
+    "en": "occlusal interference",
+    "zh": "咬合干扰",
+    "risk": true
+  },
+  {
+    "id": "occlusion_005",
+    "category": "occlusion",
+    "ja": "側方運動",
+    "reading": "そくほううんどう",
+    "en": "lateral movement",
+    "zh": "侧方运动",
+    "risk": false
+  },
+  {
+    "id": "occlusion_006",
+    "category": "occlusion",
+    "ja": "前方運動",
+    "reading": "ぜんぽううんどう",
+    "en": "protrusive movement",
+    "zh": "前伸运动",
+    "risk": false
+  },
+  {
+    "id": "occlusion_007",
+    "category": "occlusion",
+    "ja": "中心咬合位",
+    "reading": "ちゅうしんこうごうい",
+    "en": "centric occlusion",
+    "zh": "正中咬合位",
+    "risk": true
+  },
+  {
+    "id": "occlusion_008",
+    "category": "occlusion",
+    "ja": "咬頭嵌合位",
+    "reading": "こうとうかんごうい",
+    "en": "maximum intercuspation",
+    "zh": "最大牙尖交错位",
+    "risk": true
+  },
+  {
+    "id": "occlusion_009",
+    "category": "occlusion",
+    "ja": "咬合調整",
+    "reading": "こうごうちょうせい",
+    "en": "occlusal adjustment",
+    "zh": "咬合调整",
+    "risk": true
+  },
+  {
+    "id": "occlusion_010",
+    "category": "occlusion",
+    "ja": "パラファンクション",
+    "reading": "ぱらふぁんくしょん",
+    "en": "parafunction",
+    "zh": "副功能",
+    "risk": false
+  },
+  {
+    "id": "occlusion_011",
+    "category": "occlusion",
+    "ja": "ブラキシズム",
+    "reading": "ぶらきしずむ",
+    "en": "bruxism",
+    "zh": "磨牙症",
+    "risk": true
+  },
+  {
+    "id": "occlusion_012",
+    "category": "occlusion",
+    "ja": "ナイトガード",
+    "reading": "ないとがーど",
+    "en": "night guard",
+    "zh": "夜磨牙垫",
+    "risk": false
+  },
+  {
+    "id": "anatomy_003",
+    "category": "anatomy",
+    "ja": "下顎管",
+    "reading": "かがくかん",
+    "en": "mandibular canal",
+    "zh": "下颌管",
+    "risk": true
+  },
+  {
+    "id": "anatomy_004",
+    "category": "anatomy",
+    "ja": "オトガイ神経",
+    "reading": "おとがいしんけい",
+    "en": "mental nerve",
+    "zh": "颏神经",
+    "risk": true
+  },
+  {
+    "id": "anatomy_005",
+    "category": "anatomy",
+    "ja": "切歯管",
+    "reading": "せっしかん",
+    "en": "incisive canal",
+    "zh": "切牙管",
+    "risk": true
+  },
+  {
+    "id": "anatomy_006",
+    "category": "anatomy",
+    "ja": "鼻腔底",
+    "reading": "びくうてい",
+    "en": "nasal floor",
+    "zh": "鼻腔底",
+    "risk": true
+  },
+  {
+    "id": "anatomy_007",
+    "category": "anatomy",
+    "ja": "口蓋側",
+    "reading": "こうがいそく",
+    "en": "palatal side",
+    "zh": "腭侧",
+    "risk": true
+  },
+  {
+    "id": "anatomy_008",
+    "category": "anatomy",
+    "ja": "顎堤",
+    "reading": "がくてい",
+    "en": "alveolar ridge",
+    "zh": "牙槽嵴",
+    "risk": false
+  },
+  {
+    "id": "anatomy_009",
+    "category": "anatomy",
+    "ja": "無歯顎",
+    "reading": "むしがく",
+    "en": "edentulous jaw",
+    "zh": "无牙颌",
+    "risk": false
+  },
+  {
+    "id": "anatomy_010",
+    "category": "anatomy",
+    "ja": "部分欠損",
+    "reading": "ぶぶんけっそん",
+    "en": "partial edentulism",
+    "zh": "部分缺牙",
+    "risk": false
+  },
+  {
+    "id": "anatomy_011",
+    "category": "anatomy",
+    "ja": "遊離端欠損",
+    "reading": "ゆうりたんけっそん",
+    "en": "free-end edentulism",
+    "zh": "游离端缺失",
+    "risk": true
+  },
+  {
+    "id": "anatomy_012",
+    "category": "anatomy",
+    "ja": "中間欠損",
+    "reading": "ちゅうかんけっそん",
+    "en": "bounded edentulous space",
+    "zh": "中间缺失",
+    "risk": false
+  },
+  {
+    "id": "anatomy_013",
+    "category": "anatomy",
+    "ja": "隣在歯",
+    "reading": "りんざいし",
+    "en": "adjacent tooth",
+    "zh": "邻牙",
+    "risk": true
+  },
+  {
+    "id": "anatomy_014",
+    "category": "anatomy",
+    "ja": "対合歯",
+    "reading": "たいごうし",
+    "en": "opposing tooth",
+    "zh": "对颌牙",
+    "risk": true
+  },
+  {
+    "id": "complication_001",
+    "category": "complication",
+    "ja": "インプラント喪失",
+    "reading": "いんぷらんとそうしつ",
+    "en": "implant loss",
+    "zh": "种植体丧失",
+    "risk": true
+  },
+  {
+    "id": "complication_002",
+    "category": "complication",
+    "ja": "早期失敗",
+    "reading": "そうきしっぱい",
+    "en": "early failure",
+    "zh": "早期失败",
+    "risk": true
+  },
+  {
+    "id": "complication_003",
+    "category": "complication",
+    "ja": "晩期失敗",
+    "reading": "ばんきしっぱい",
+    "en": "late failure",
+    "zh": "晚期失败",
+    "risk": true
+  },
+  {
+    "id": "complication_004",
+    "category": "complication",
+    "ja": "術後感染",
+    "reading": "じゅつごかんせん",
+    "en": "postoperative infection",
+    "zh": "术后感染",
+    "risk": true
+  },
+  {
+    "id": "complication_005",
+    "category": "complication",
+    "ja": "出血",
+    "reading": "しゅっけつ",
+    "en": "bleeding",
+    "zh": "出血",
+    "risk": true
+  },
+  {
+    "id": "complication_006",
+    "category": "complication",
+    "ja": "腫脹",
+    "reading": "しゅちょう",
+    "en": "swelling",
+    "zh": "肿胀",
+    "risk": true
+  },
+  {
+    "id": "complication_007",
+    "category": "complication",
+    "ja": "疼痛",
+    "reading": "とうつう",
+    "en": "pain",
+    "zh": "疼痛",
+    "risk": true
+  },
+  {
+    "id": "complication_008",
+    "category": "complication",
+    "ja": "知覚鈍麻",
+    "reading": "ちかくどんま",
+    "en": "hypoesthesia",
+    "zh": "感觉减退",
+    "risk": true
+  },
+  {
+    "id": "complication_009",
+    "category": "complication",
+    "ja": "知覚異常",
+    "reading": "ちかくいじょう",
+    "en": "paresthesia",
+    "zh": "感觉异常",
+    "risk": true
+  },
+  {
+    "id": "complication_010",
+    "category": "complication",
+    "ja": "神経損傷",
+    "reading": "しんけいそんしょう",
+    "en": "nerve injury",
+    "zh": "神经损伤",
+    "risk": true
+  },
+  {
+    "id": "complication_011",
+    "category": "complication",
+    "ja": "骨壊死",
+    "reading": "こつえし",
+    "en": "bone necrosis",
+    "zh": "骨坏死",
+    "risk": true
+  },
+  {
+    "id": "complication_012",
+    "category": "complication",
+    "ja": "創離開",
+    "reading": "そうりかい",
+    "en": "wound dehiscence",
+    "zh": "创口裂开",
+    "risk": true
+  },
+  {
+    "id": "complication_013",
+    "category": "complication",
+    "ja": "メンブレン露出",
+    "reading": "めんぶれんろしゅつ",
+    "en": "membrane exposure",
+    "zh": "屏障膜暴露",
+    "risk": true
+  },
+  {
+    "id": "complication_014",
+    "category": "complication",
+    "ja": "インプラント破折",
+    "reading": "いんぷらんとはせつ",
+    "en": "implant fracture",
+    "zh": "种植体折断",
+    "risk": true
+  },
+  {
+    "id": "complication_015",
+    "category": "complication",
+    "ja": "アバットメント破折",
+    "reading": "あばっとめんとはせつ",
+    "en": "abutment fracture",
+    "zh": "基台折断",
+    "risk": true
+  },
+  {
+    "id": "complication_016",
+    "category": "complication",
+    "ja": "スクリュー破折",
+    "reading": "すくりゅーはせつ",
+    "en": "screw fracture",
+    "zh": "螺丝折断",
+    "risk": true
+  },
+  {
+    "id": "complication_017",
+    "category": "complication",
+    "ja": "上部構造破損",
+    "reading": "じょうぶこうぞうはそん",
+    "en": "superstructure fracture",
+    "zh": "上部结构破损",
+    "risk": true
+  },
+  {
+    "id": "maintenance_001",
+    "category": "maintenance",
+    "ja": "メインテナンス",
+    "reading": "めいんてなんす",
+    "en": "maintenance",
+    "zh": "维护",
+    "risk": false
+  },
+  {
+    "id": "maintenance_002",
+    "category": "maintenance",
+    "ja": "リコール",
+    "reading": "りこーる",
+    "en": "recall visit",
+    "zh": "复查",
+    "risk": false
+  },
+  {
+    "id": "maintenance_003",
+    "category": "maintenance",
+    "ja": "プラークコントロール",
+    "reading": "ぷらーくこんとろーる",
+    "en": "plaque control",
+    "zh": "菌斑控制",
+    "risk": false
+  },
+  {
+    "id": "maintenance_004",
+    "category": "maintenance",
+    "ja": "プロービング",
+    "reading": "ぷろーびんぐ",
+    "en": "probing",
+    "zh": "探诊",
+    "risk": false
+  },
+  {
+    "id": "maintenance_005",
+    "category": "maintenance",
+    "ja": "プロービングデプス",
+    "reading": "ぷろーびんぐでぷす",
+    "en": "probing depth",
+    "zh": "探诊深度",
+    "risk": true
+  },
+  {
+    "id": "maintenance_006",
+    "category": "maintenance",
+    "ja": "出血指数",
+    "reading": "しゅっけつしすう",
+    "en": "bleeding index",
+    "zh": "出血指数",
+    "risk": true
+  },
+  {
+    "id": "maintenance_007",
+    "category": "maintenance",
+    "ja": "排膿",
+    "reading": "はいのう",
+    "en": "suppuration",
+    "zh": "溢脓",
+    "risk": true
+  },
+  {
+    "id": "maintenance_008",
+    "category": "maintenance",
+    "ja": "インプラント周囲ポケット",
+    "reading": "いんぷらんとしゅういぽけっと",
+    "en": "peri-implant pocket",
+    "zh": "种植体周围袋",
+    "risk": true
+  },
+  {
+    "id": "maintenance_009",
+    "category": "maintenance",
+    "ja": "デブライドメント",
+    "reading": "でぶらいどめんと",
+    "en": "debridement",
+    "zh": "清创",
+    "risk": false
+  },
+  {
+    "id": "maintenance_010",
+    "category": "maintenance",
+    "ja": "エアアブレージョン",
+    "reading": "えああぶれーじょん",
+    "en": "air abrasion",
+    "zh": "喷砂",
+    "risk": false
+  },
+  {
+    "id": "digital_002",
+    "category": "digital",
+    "ja": "デジタルワックスアップ",
+    "reading": "でじたるわっくすあっぷ",
+    "en": "digital wax-up",
+    "zh": "数字化蜡型",
+    "risk": false
+  },
+  {
+    "id": "digital_003",
+    "category": "digital",
+    "ja": "バーチャルセットアップ",
+    "reading": "ばーちゃるせっとあっぷ",
+    "en": "virtual setup",
+    "zh": "虚拟排牙",
+    "risk": false
+  },
+  {
+    "id": "digital_004",
+    "category": "digital",
+    "ja": "プランニングソフト",
+    "reading": "ぷらんにんぐそふと",
+    "en": "planning software",
+    "zh": "计划软件",
+    "risk": false
+  },
+  {
+    "id": "digital_005",
+    "category": "digital",
+    "ja": "シミュレーション",
+    "reading": "しみゅれーしょん",
+    "en": "simulation",
+    "zh": "模拟",
+    "risk": false
+  },
+  {
+    "id": "digital_006",
+    "category": "digital",
+    "ja": "DICOM",
+    "reading": "だいこむ",
+    "en": "DICOM",
+    "zh": "DICOM",
+    "risk": false
+  },
+  {
+    "id": "digital_007",
+    "category": "digital",
+    "ja": "STLデータ",
+    "reading": "えすてぃーえるでーた",
+    "en": "STL data",
+    "zh": "STL数据",
+    "risk": false
+  },
+  {
+    "id": "manufacturer_001",
+    "category": "manufacturer",
+    "ja": "ストローマン",
+    "reading": "すとろーまん",
+    "en": "Straumann",
+    "zh": "士卓曼",
+    "risk": false,
+    "note": "Major implant manufacturer; keep brand name unchanged."
+  },
+  {
+    "id": "manufacturer_002",
+    "category": "manufacturer",
+    "ja": "Straumann",
+    "reading": "すとろーまん",
+    "en": "Straumann",
+    "zh": "士卓曼",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_003",
+    "category": "manufacturer",
+    "ja": "ノーベルバイオケア",
+    "reading": "のーべるばいおけあ",
+    "en": "Nobel Biocare",
+    "zh": "诺保科",
+    "risk": false,
+    "note": "Major implant manufacturer; keep brand name unchanged."
+  },
+  {
+    "id": "manufacturer_004",
+    "category": "manufacturer",
+    "ja": "Nobel Biocare",
+    "reading": "のーべるばいおけあ",
+    "en": "Nobel Biocare",
+    "zh": "诺保科",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_005",
+    "category": "manufacturer",
+    "ja": "デンツプライシロナ",
+    "reading": "でんつぷらいしろな",
+    "en": "Dentsply Sirona",
+    "zh": "登士柏西诺德",
+    "risk": false,
+    "note": "Major dental manufacturer."
+  },
+  {
+    "id": "manufacturer_006",
+    "category": "manufacturer",
+    "ja": "Dentsply Sirona",
+    "reading": "でんつぷらいしろな",
+    "en": "Dentsply Sirona",
+    "zh": "登士柏西诺德",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_007",
+    "category": "manufacturer",
+    "ja": "ジンヴィ",
+    "reading": "じんゔぃ",
+    "en": "ZimVie",
+    "zh": "ZimVie",
+    "risk": false,
+    "note": "Major implant manufacturer; formerly related to Zimmer Biomet dental business."
+  },
+  {
+    "id": "manufacturer_008",
+    "category": "manufacturer",
+    "ja": "ZimVie",
+    "reading": "じんゔぃ",
+    "en": "ZimVie",
+    "zh": "ZimVie",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_009",
+    "category": "manufacturer",
+    "ja": "バイオホライズンズ",
+    "reading": "ばいおほらいずんず",
+    "en": "BioHorizons",
+    "zh": "BioHorizons",
+    "risk": false,
+    "note": "Major implant manufacturer."
+  },
+  {
+    "id": "manufacturer_010",
+    "category": "manufacturer",
+    "ja": "BioHorizons",
+    "reading": "ばいおほらいずんず",
+    "en": "BioHorizons",
+    "zh": "BioHorizons",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_011",
+    "category": "manufacturer",
+    "ja": "カムログ",
+    "reading": "かむろぐ",
+    "en": "CAMLOG",
+    "zh": "CAMLOG",
+    "risk": false,
+    "note": "Implant system brand distributed with BioHorizons Camlog in some markets."
+  },
+  {
+    "id": "manufacturer_012",
+    "category": "manufacturer",
+    "ja": "CAMLOG",
+    "reading": "かむろぐ",
+    "en": "CAMLOG",
+    "zh": "CAMLOG",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_013",
+    "category": "manufacturer",
+    "ja": "オステム",
+    "reading": "おすてむ",
+    "en": "Osstem Implant",
+    "zh": "奥齿泰",
+    "risk": false,
+    "note": "Major Korean implant manufacturer."
+  },
+  {
+    "id": "manufacturer_014",
+    "category": "manufacturer",
+    "ja": "Osstem",
+    "reading": "おすてむ",
+    "en": "Osstem Implant",
+    "zh": "奥齿泰",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_015",
+    "category": "manufacturer",
+    "ja": "ハイオッセン",
+    "reading": "はいおっせん",
+    "en": "Hiossen Implant",
+    "zh": "Hiossen",
+    "risk": false,
+    "note": "Osstem-affiliated implant brand used in some markets."
+  },
+  {
+    "id": "manufacturer_016",
+    "category": "manufacturer",
+    "ja": "Hiossen",
+    "reading": "はいおっせん",
+    "en": "Hiossen Implant",
+    "zh": "Hiossen",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_017",
+    "category": "manufacturer",
+    "ja": "メガジェン",
+    "reading": "めがじぇん",
+    "en": "MegaGen",
+    "zh": "MegaGen",
+    "risk": false,
+    "note": "Major Korean implant manufacturer."
+  },
+  {
+    "id": "manufacturer_018",
+    "category": "manufacturer",
+    "ja": "MegaGen",
+    "reading": "めがじぇん",
+    "en": "MegaGen",
+    "zh": "MegaGen",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_019",
+    "category": "manufacturer",
+    "ja": "ネオデント",
+    "reading": "ねおでんと",
+    "en": "Neodent",
+    "zh": "Neodent",
+    "risk": false,
+    "note": "Straumann Group implant brand."
+  },
+  {
+    "id": "manufacturer_020",
+    "category": "manufacturer",
+    "ja": "Neodent",
+    "reading": "ねおでんと",
+    "en": "Neodent",
+    "zh": "Neodent",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_021",
+    "category": "manufacturer",
+    "ja": "MIS",
+    "reading": "えむあいえす",
+    "en": "MIS Implants",
+    "zh": "MIS",
+    "risk": false,
+    "note": "Major implant manufacturer; keep abbreviation unchanged."
+  },
+  {
+    "id": "manufacturer_022",
+    "category": "manufacturer",
+    "ja": "デンティウム",
+    "reading": "でんてぃうむ",
+    "en": "Dentium",
+    "zh": "Dentium",
+    "risk": false,
+    "note": "Major Korean implant manufacturer."
+  },
+  {
+    "id": "manufacturer_023",
+    "category": "manufacturer",
+    "ja": "Dentium",
+    "reading": "でんてぃうむ",
+    "en": "Dentium",
+    "zh": "Dentium",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_024",
+    "category": "manufacturer",
+    "ja": "インプラントダイレクト",
+    "reading": "いんぷらんとだいれくと",
+    "en": "Implant Direct",
+    "zh": "Implant Direct",
+    "risk": false,
+    "note": "Implant manufacturer/system brand."
+  },
+  {
+    "id": "manufacturer_025",
+    "category": "manufacturer",
+    "ja": "Implant Direct",
+    "reading": "いんぷらんとだいれくと",
+    "en": "Implant Direct",
+    "zh": "Implant Direct",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_026",
+    "category": "manufacturer",
+    "ja": "キーストーンデンタル",
+    "reading": "きーすとーんでんたる",
+    "en": "Keystone Dental",
+    "zh": "Keystone Dental",
+    "risk": false,
+    "note": "Implant manufacturer."
+  },
+  {
+    "id": "manufacturer_027",
+    "category": "manufacturer",
+    "ja": "Keystone Dental",
+    "reading": "きーすとーんでんたる",
+    "en": "Keystone Dental",
+    "zh": "Keystone Dental",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_028",
+    "category": "manufacturer",
+    "ja": "バイコン",
+    "reading": "ばいこん",
+    "en": "Bicon",
+    "zh": "Bicon",
+    "risk": false,
+    "note": "Implant manufacturer/system brand."
+  },
+  {
+    "id": "manufacturer_029",
+    "category": "manufacturer",
+    "ja": "Bicon",
+    "reading": "ばいこん",
+    "en": "Bicon",
+    "zh": "Bicon",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_030",
+    "category": "manufacturer",
+    "ja": "サザンインプラント",
+    "reading": "さざんいんぷらんと",
+    "en": "Southern Implants",
+    "zh": "Southern Implants",
+    "risk": false,
+    "note": "Implant manufacturer."
+  },
+  {
+    "id": "manufacturer_031",
+    "category": "manufacturer",
+    "ja": "Southern Implants",
+    "reading": "さざんいんぷらんと",
+    "en": "Southern Implants",
+    "zh": "Southern Implants",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_032",
+    "category": "manufacturer",
+    "ja": "トーメンメディカル",
+    "reading": "とーめんめでぃかる",
+    "en": "Thommen Medical",
+    "zh": "Thommen Medical",
+    "risk": false,
+    "note": "Implant manufacturer."
+  },
+  {
+    "id": "manufacturer_033",
+    "category": "manufacturer",
+    "ja": "Thommen Medical",
+    "reading": "とーめんめでぃかる",
+    "en": "Thommen Medical",
+    "zh": "Thommen Medical",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_034",
+    "category": "manufacturer",
+    "ja": "ベゴ",
+    "reading": "べご",
+    "en": "BEGO",
+    "zh": "BEGO",
+    "risk": false,
+    "note": "Dental manufacturer with implant products."
+  },
+  {
+    "id": "manufacturer_035",
+    "category": "manufacturer",
+    "ja": "BEGO",
+    "reading": "べご",
+    "en": "BEGO",
+    "zh": "BEGO",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_036",
+    "category": "manufacturer",
+    "ja": "ブレデント",
+    "reading": "ぶれでんと",
+    "en": "bredent",
+    "zh": "bredent",
+    "risk": false,
+    "note": "Dental manufacturer with implant systems."
+  },
+  {
+    "id": "manufacturer_037",
+    "category": "manufacturer",
+    "ja": "bredent",
+    "reading": "ぶれでんと",
+    "en": "bredent",
+    "zh": "bredent",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "manufacturer_038",
+    "category": "manufacturer",
+    "ja": "スウェーデンアンドマルティナ",
+    "reading": "すうぇーでんあんどまるてぃな",
+    "en": "Sweden & Martina",
+    "zh": "Sweden & Martina",
+    "risk": false,
+    "note": "Implant manufacturer."
+  },
+  {
+    "id": "manufacturer_039",
+    "category": "manufacturer",
+    "ja": "Sweden & Martina",
+    "reading": "すうぇーでんあんどまるてぃな",
+    "en": "Sweden & Martina",
+    "zh": "Sweden & Martina",
+    "risk": false,
+    "note": "Roman-letter brand variant."
+  },
+  {
+    "id": "implant_system_001",
+    "category": "implant_system",
+    "ja": "BLX",
+    "reading": "びーえるえっくす",
+    "en": "Straumann BLX Implant System",
+    "zh": "Straumann BLX种植系统",
+    "risk": false,
+    "note": "Straumann implant system; keep BLX unchanged."
+  },
+  {
+    "id": "implant_system_002",
+    "category": "implant_system",
+    "ja": "TLX",
+    "reading": "てぃーえるえっくす",
+    "en": "Straumann TLX Implant System",
+    "zh": "Straumann TLX种植系统",
+    "risk": false,
+    "note": "Straumann implant system; keep TLX unchanged."
+  },
+  {
+    "id": "implant_system_003",
+    "category": "implant_system",
+    "ja": "BLT",
+    "reading": "びーえるてぃー",
+    "en": "Straumann Bone Level Tapered Implant",
+    "zh": "Straumann骨水平锥形种植体",
+    "risk": false,
+    "note": "Straumann Bone Level Tapered abbreviation."
+  },
+  {
+    "id": "implant_system_004",
+    "category": "implant_system",
+    "ja": "Bone Level",
+    "reading": "ぼーんれべる",
+    "en": "Bone Level implant",
+    "zh": "骨水平种植体",
+    "risk": true,
+    "note": "Implant platform/position concept; confirm system context."
+  },
+  {
+    "id": "implant_system_005",
+    "category": "implant_system",
+    "ja": "Tissue Level",
+    "reading": "てぃっしゅれべる",
+    "en": "Tissue Level implant",
+    "zh": "软组织水平种植体",
+    "risk": true,
+    "note": "Implant platform/position concept; confirm system context."
+  },
+  {
+    "id": "implant_system_006",
+    "category": "implant_system",
+    "ja": "NobelActive",
+    "reading": "のーべるあくてぃぶ",
+    "en": "NobelActive",
+    "zh": "NobelActive",
+    "risk": false,
+    "note": "Nobel Biocare implant system; keep brand name unchanged."
+  },
+  {
+    "id": "implant_system_007",
+    "category": "implant_system",
+    "ja": "ノーベルアクティブ",
+    "reading": "のーべるあくてぃぶ",
+    "en": "NobelActive",
+    "zh": "NobelActive",
+    "risk": false,
+    "note": "Katakana variant of NobelActive."
+  },
+  {
+    "id": "implant_system_008",
+    "category": "implant_system",
+    "ja": "NobelReplace",
+    "reading": "のーべるりぷれいす",
+    "en": "NobelReplace",
+    "zh": "NobelReplace",
+    "risk": false,
+    "note": "Nobel Biocare implant system; keep brand name unchanged."
+  },
+  {
+    "id": "implant_system_009",
+    "category": "implant_system",
+    "ja": "ノーベルリプレイス",
+    "reading": "のーべるりぷれいす",
+    "en": "NobelReplace",
+    "zh": "NobelReplace",
+    "risk": false,
+    "note": "Katakana variant of NobelReplace."
+  },
+  {
+    "id": "implant_system_010",
+    "category": "implant_system",
+    "ja": "NobelParallel",
+    "reading": "のーべるぱられる",
+    "en": "NobelParallel",
+    "zh": "NobelParallel",
+    "risk": false,
+    "note": "Nobel Biocare implant system; keep brand name unchanged."
+  },
+  {
+    "id": "implant_system_011",
+    "category": "implant_system",
+    "ja": "Nobel Biocare N1",
+    "reading": "のーべるばいおけあえぬわん",
+    "en": "Nobel Biocare N1",
+    "zh": "Nobel Biocare N1",
+    "risk": false,
+    "note": "Nobel Biocare implant system."
+  },
+  {
+    "id": "implant_system_012",
+    "category": "implant_system",
+    "ja": "N1",
+    "reading": "えぬわん",
+    "en": "Nobel Biocare N1",
+    "zh": "Nobel Biocare N1",
+    "risk": false,
+    "note": "Short system name; confirm context if ambiguous."
+  },
+  {
+    "id": "implant_system_013",
+    "category": "implant_system",
+    "ja": "Astra Tech Implant System EV",
+    "reading": "あすとらてっくいーぶい",
+    "en": "Astra Tech Implant System EV",
+    "zh": "Astra Tech Implant System EV",
+    "risk": false,
+    "note": "Dentsply Sirona implant system."
+  },
+  {
+    "id": "implant_system_014",
+    "category": "implant_system",
+    "ja": "アストラテックEV",
+    "reading": "あすとらてっくいーぶい",
+    "en": "Astra Tech Implant System EV",
+    "zh": "Astra Tech Implant System EV",
+    "risk": false,
+    "note": "Katakana variant of Astra Tech Implant System EV."
+  },
+  {
+    "id": "implant_system_015",
+    "category": "implant_system",
+    "ja": "Ankylos",
+    "reading": "あんきろす",
+    "en": "Ankylos",
+    "zh": "Ankylos",
+    "risk": false,
+    "note": "Dentsply Sirona implant system."
+  },
+  {
+    "id": "implant_system_016",
+    "category": "implant_system",
+    "ja": "アンキロス",
+    "reading": "あんきろす",
+    "en": "Ankylos",
+    "zh": "Ankylos",
+    "risk": false,
+    "note": "Katakana variant of Ankylos."
+  },
+  {
+    "id": "implant_system_017",
+    "category": "implant_system",
+    "ja": "XiVE",
+    "reading": "ざいぶ",
+    "en": "XiVE",
+    "zh": "XiVE",
+    "risk": false,
+    "note": "Dentsply Sirona implant system."
+  },
+  {
+    "id": "implant_system_018",
+    "category": "implant_system",
+    "ja": "ザイブ",
+    "reading": "ざいぶ",
+    "en": "XiVE",
+    "zh": "XiVE",
+    "risk": false,
+    "note": "Katakana variant of XiVE."
+  },
+  {
+    "id": "implant_system_019",
+    "category": "implant_system",
+    "ja": "PrimeTaper",
+    "reading": "ぷらいむてーぱー",
+    "en": "PrimeTaper",
+    "zh": "PrimeTaper",
+    "risk": false,
+    "note": "Dentsply Sirona implant system."
+  },
+  {
+    "id": "implant_system_020",
+    "category": "implant_system",
+    "ja": "プライムテーパー",
+    "reading": "ぷらいむてーぱー",
+    "en": "PrimeTaper",
+    "zh": "PrimeTaper",
+    "risk": false,
+    "note": "Katakana variant of PrimeTaper."
+  },
+  {
+    "id": "implant_system_021",
+    "category": "implant_system",
+    "ja": "Tapered Screw-Vent",
+    "reading": "てーぱーどすくりゅーべんと",
+    "en": "Tapered Screw-Vent",
+    "zh": "Tapered Screw-Vent",
+    "risk": false,
+    "note": "ZimVie implant system."
+  },
+  {
+    "id": "implant_system_022",
+    "category": "implant_system",
+    "ja": "TSV",
+    "reading": "てぃーえすぶい",
+    "en": "Tapered Screw-Vent",
+    "zh": "Tapered Screw-Vent",
+    "risk": false,
+    "note": "Abbreviation of Tapered Screw-Vent; confirm context if ambiguous."
+  },
+  {
+    "id": "implant_system_023",
+    "category": "implant_system",
+    "ja": "SwissPlus",
+    "reading": "すいすぷらす",
+    "en": "SwissPlus",
+    "zh": "SwissPlus",
+    "risk": false,
+    "note": "ZimVie implant system."
+  },
+  {
+    "id": "implant_system_024",
+    "category": "implant_system",
+    "ja": "Tapered Pro",
+    "reading": "てーぱーどぷろ",
+    "en": "Tapered Pro",
+    "zh": "Tapered Pro",
+    "risk": false,
+    "note": "BioHorizons implant system."
+  },
+  {
+    "id": "implant_system_025",
+    "category": "implant_system",
+    "ja": "CAMLOG PROGRESSIVE-LINE",
+    "reading": "かむろぐぷろぐれっしぶらいん",
+    "en": "CAMLOG PROGRESSIVE-LINE",
+    "zh": "CAMLOG PROGRESSIVE-LINE",
+    "risk": false,
+    "note": "CAMLOG implant line."
+  },
+  {
+    "id": "implant_system_026",
+    "category": "implant_system",
+    "ja": "CAMLOG SCREW-LINE",
+    "reading": "かむろぐすくりゅーらいん",
+    "en": "CAMLOG SCREW-LINE",
+    "zh": "CAMLOG SCREW-LINE",
+    "risk": false,
+    "note": "CAMLOG implant line."
+  },
+  {
+    "id": "implant_system_027",
+    "category": "implant_system",
+    "ja": "CONELOG",
+    "reading": "こーんろぐ",
+    "en": "CONELOG",
+    "zh": "CONELOG",
+    "risk": false,
+    "note": "CAMLOG conical connection implant system."
+  },
+  {
+    "id": "implant_system_028",
+    "category": "implant_system",
+    "ja": "CONELOG PROGRESSIVE-LINE",
+    "reading": "こーんろぐぷろぐれっしぶらいん",
+    "en": "CONELOG PROGRESSIVE-LINE",
+    "zh": "CONELOG PROGRESSIVE-LINE",
+    "risk": false,
+    "note": "CONELOG implant line."
+  },
+  {
+    "id": "implant_system_029",
+    "category": "implant_system",
+    "ja": "TS System",
+    "reading": "てぃーえすしすてむ",
+    "en": "Osstem TS System",
+    "zh": "Osstem TS种植系统",
+    "risk": false,
+    "note": "Osstem implant system."
+  },
+  {
+    "id": "implant_system_030",
+    "category": "implant_system",
+    "ja": "TSIII",
+    "reading": "てぃーえすすりー",
+    "en": "Osstem TSIII",
+    "zh": "Osstem TSIII",
+    "risk": false,
+    "note": "Osstem implant line."
+  },
+  {
+    "id": "implant_system_031",
+    "category": "implant_system",
+    "ja": "TSIV",
+    "reading": "てぃーえすふぉー",
+    "en": "Osstem TSIV",
+    "zh": "Osstem TSIV",
+    "risk": false,
+    "note": "Osstem implant line."
+  },
+  {
+    "id": "implant_system_032",
+    "category": "implant_system",
+    "ja": "ET System",
+    "reading": "いーてぃーしすてむ",
+    "en": "Hiossen ET Implant System",
+    "zh": "Hiossen ET种植系统",
+    "risk": false,
+    "note": "Hiossen implant system."
+  },
+  {
+    "id": "implant_system_033",
+    "category": "implant_system",
+    "ja": "ET III",
+    "reading": "いーてぃーすりー",
+    "en": "Hiossen ET III",
+    "zh": "Hiossen ET III",
+    "risk": false,
+    "note": "Hiossen implant line."
+  },
+  {
+    "id": "implant_system_034",
+    "category": "implant_system",
+    "ja": "ET IV",
+    "reading": "いーてぃーふぉー",
+    "en": "Hiossen ET IV",
+    "zh": "Hiossen ET IV",
+    "risk": false,
+    "note": "Hiossen implant line."
+  },
+  {
+    "id": "implant_system_035",
+    "category": "implant_system",
+    "ja": "AnyRidge",
+    "reading": "えにーりっじ",
+    "en": "AnyRidge",
+    "zh": "AnyRidge",
+    "risk": false,
+    "note": "MegaGen implant system."
+  },
+  {
+    "id": "implant_system_036",
+    "category": "implant_system",
+    "ja": "エニーリッジ",
+    "reading": "えにーりっじ",
+    "en": "AnyRidge",
+    "zh": "AnyRidge",
+    "risk": false,
+    "note": "Katakana variant of AnyRidge."
+  },
+  {
+    "id": "implant_system_037",
+    "category": "implant_system",
+    "ja": "AnyOne",
+    "reading": "えにーわん",
+    "en": "AnyOne",
+    "zh": "AnyOne",
+    "risk": false,
+    "note": "MegaGen implant system."
+  },
+  {
+    "id": "implant_system_038",
+    "category": "implant_system",
+    "ja": "エニーワン",
+    "reading": "えにーわん",
+    "en": "AnyOne",
+    "zh": "AnyOne",
+    "risk": false,
+    "note": "Katakana variant of AnyOne."
+  },
+  {
+    "id": "implant_system_039",
+    "category": "implant_system",
+    "ja": "BlueDiamond",
+    "reading": "ぶるーだいやもんど",
+    "en": "BlueDiamond",
+    "zh": "BlueDiamond",
+    "risk": false,
+    "note": "MegaGen implant system."
+  },
+  {
+    "id": "implant_system_040",
+    "category": "implant_system",
+    "ja": "ブルーダイヤモンド",
+    "reading": "ぶるーだいやもんど",
+    "en": "BlueDiamond",
+    "zh": "BlueDiamond",
+    "risk": false,
+    "note": "Katakana variant of BlueDiamond."
+  },
+  {
+    "id": "implant_system_041",
+    "category": "implant_system",
+    "ja": "Grand Morse",
+    "reading": "ぐらんどもーす",
+    "en": "Neodent Grand Morse",
+    "zh": "Neodent Grand Morse",
+    "risk": false,
+    "note": "Neodent implant system."
+  },
+  {
+    "id": "implant_system_042",
+    "category": "implant_system",
+    "ja": "グランドモース",
+    "reading": "ぐらんどもーす",
+    "en": "Neodent Grand Morse",
+    "zh": "Neodent Grand Morse",
+    "risk": false,
+    "note": "Katakana variant of Grand Morse."
+  },
+  {
+    "id": "implant_system_043",
+    "category": "implant_system",
+    "ja": "Helix GM",
+    "reading": "へりっくすじーえむ",
+    "en": "Helix GM",
+    "zh": "Helix GM",
+    "risk": false,
+    "note": "Neodent Grand Morse implant line."
+  },
+  {
+    "id": "implant_system_044",
+    "category": "implant_system",
+    "ja": "Drive GM",
+    "reading": "どらいぶじーえむ",
+    "en": "Drive GM",
+    "zh": "Drive GM",
+    "risk": false,
+    "note": "Neodent Grand Morse implant line."
+  },
+  {
+    "id": "implant_system_045",
+    "category": "implant_system",
+    "ja": "MIS C1",
+    "reading": "えむあいえすしーわん",
+    "en": "MIS C1",
+    "zh": "MIS C1",
+    "risk": false,
+    "note": "MIS implant system."
+  },
+  {
+    "id": "implant_system_046",
+    "category": "implant_system",
+    "ja": "MIS V3",
+    "reading": "えむあいえすぶいすりー",
+    "en": "MIS V3",
+    "zh": "MIS V3",
+    "risk": false,
+    "note": "MIS implant system."
+  },
+  {
+    "id": "implant_system_047",
+    "category": "implant_system",
+    "ja": "MIS SEVEN",
+    "reading": "えむあいえすせぶん",
+    "en": "MIS SEVEN",
+    "zh": "MIS SEVEN",
+    "risk": false,
+    "note": "MIS implant system."
+  },
+  {
+    "id": "implant_system_048",
+    "category": "implant_system",
+    "ja": "SuperLine",
+    "reading": "すーぱーらいん",
+    "en": "Dentium SuperLine",
+    "zh": "Dentium SuperLine",
+    "risk": false,
+    "note": "Dentium implant system."
+  },
+  {
+    "id": "implant_system_049",
+    "category": "implant_system",
+    "ja": "スーパーライン",
+    "reading": "すーぱーらいん",
+    "en": "Dentium SuperLine",
+    "zh": "Dentium SuperLine",
+    "risk": false,
+    "note": "Katakana variant of SuperLine."
+  },
+  {
+    "id": "implant_system_050",
+    "category": "implant_system",
+    "ja": "Implantium",
+    "reading": "いんぷらんてぃうむ",
+    "en": "Dentium Implantium",
+    "zh": "Dentium Implantium",
+    "risk": false,
+    "note": "Dentium implant system."
+  },
+  {
+    "id": "implant_system_051",
+    "category": "implant_system",
+    "ja": "インプランティウム",
+    "reading": "いんぷらんてぃうむ",
+    "en": "Dentium Implantium",
+    "zh": "Dentium Implantium",
+    "risk": false,
+    "note": "Katakana variant of Implantium."
+  },
+  {
+    "id": "implant_surface_001",
+    "category": "implant_surface",
+    "ja": "SLA",
+    "reading": "えすえるえー",
+    "en": "SLA surface",
+    "zh": "SLA表面",
+    "risk": true,
+    "note": "Implant surface; confirm system and surface context."
+  },
+  {
+    "id": "implant_surface_002",
+    "category": "implant_surface",
+    "ja": "SLActive",
+    "reading": "えすえるあくてぃぶ",
+    "en": "SLActive surface",
+    "zh": "SLActive表面",
+    "risk": true,
+    "note": "Straumann surface name; keep unchanged."
+  },
+  {
+    "id": "implant_surface_003",
+    "category": "implant_surface",
+    "ja": "Roxolid",
+    "reading": "ろきそりっど",
+    "en": "Roxolid",
+    "zh": "Roxolid",
+    "risk": true,
+    "note": "Straumann titanium-zirconium material name; keep unchanged."
+  },
+  {
+    "id": "implant_surface_004",
+    "category": "implant_surface",
+    "ja": "TiUnite",
+    "reading": "たいゆないと",
+    "en": "TiUnite",
+    "zh": "TiUnite",
+    "risk": true,
+    "note": "Nobel Biocare surface name; keep unchanged."
+  },
+  {
+    "id": "implant_surface_005",
+    "category": "implant_surface",
+    "ja": "TiUltra",
+    "reading": "たいうるとら",
+    "en": "TiUltra",
+    "zh": "TiUltra",
+    "risk": true,
+    "note": "Nobel Biocare surface name; keep unchanged."
+  },
+  {
+    "id": "implant_surface_006",
+    "category": "implant_surface",
+    "ja": "OsseoSpeed",
+    "reading": "おっせおすぴーど",
+    "en": "OsseoSpeed",
+    "zh": "OsseoSpeed",
+    "risk": true,
+    "note": "Astra Tech surface name; keep unchanged."
+  },
+  {
+    "id": "implant_surface_007",
+    "category": "implant_surface",
+    "ja": "Laser-Lok",
+    "reading": "れーざーろっく",
+    "en": "Laser-Lok",
+    "zh": "Laser-Lok",
+    "risk": true,
+    "note": "BioHorizons surface/collar microchannel name; keep unchanged."
+  },
+  {
+    "id": "implant_surface_008",
+    "category": "implant_surface",
+    "ja": "Trabecular Metal",
+    "reading": "とらべきゅらーめたる",
+    "en": "Trabecular Metal",
+    "zh": "Trabecular Metal",
+    "risk": true,
+    "note": "ZimVie material/surface-related product name; keep unchanged."
+  },
+  {
+    "id": "implant_surface_009",
+    "category": "implant_surface",
+    "ja": "SA surface",
+    "reading": "えすえーさーふぇす",
+    "en": "SA surface",
+    "zh": "SA表面",
+    "risk": true,
+    "note": "Sand-blasted and acid-etched surface; confirm manufacturer context."
+  },
+  {
+    "id": "implant_surface_010",
+    "category": "implant_surface",
+    "ja": "CA surface",
+    "reading": "しーえーさーふぇす",
+    "en": "CA surface",
+    "zh": "CA表面",
+    "risk": true,
+    "note": "Implant surface name; confirm manufacturer context."
+  },
+  {
+    "id": "implant_surface_011",
+    "category": "implant_surface",
+    "ja": "BA surface",
+    "reading": "びーえーさーふぇす",
+    "en": "BA surface",
+    "zh": "BA表面",
+    "risk": true,
+    "note": "Implant surface name; confirm manufacturer context."
+  },
+  {
+    "id": "implant_surface_012",
+    "category": "implant_surface",
+    "ja": "SOI surface",
+    "reading": "えすおーあいさーふぇす",
+    "en": "SOI surface",
+    "zh": "SOI表面",
+    "risk": true,
+    "note": "Osstem surface name; confirm manufacturer context."
+  },
+  {
+    "id": "connection_001",
+    "category": "connection",
+    "ja": "コニカルコネクション",
+    "reading": "こにかるこねくしょん",
+    "en": "conical connection",
+    "zh": "锥形连接",
+    "risk": true,
+    "note": "Connection type affects component compatibility."
+  },
+  {
+    "id": "connection_002",
+    "category": "connection",
+    "ja": "conical connection",
+    "reading": "こにかるこねくしょん",
+    "en": "conical connection",
+    "zh": "锥形连接",
+    "risk": true,
+    "note": "Roman-letter variant."
+  },
+  {
+    "id": "connection_003",
+    "category": "connection",
+    "ja": "インターナルヘックス",
+    "reading": "いんたーなるへっくす",
+    "en": "internal hex connection",
+    "zh": "内六角连接",
+    "risk": true,
+    "note": "Connection type affects component compatibility."
+  },
+  {
+    "id": "connection_004",
+    "category": "connection",
+    "ja": "internal hex",
+    "reading": "いんたーなるへっくす",
+    "en": "internal hex connection",
+    "zh": "内六角连接",
+    "risk": true,
+    "note": "Roman-letter variant."
+  },
+  {
+    "id": "connection_005",
+    "category": "connection",
+    "ja": "Morse taper",
+    "reading": "もーすてーぱー",
+    "en": "Morse taper connection",
+    "zh": "莫氏锥度连接",
+    "risk": true,
+    "note": "Roman-letter variant."
+  },
+  {
+    "id": "connection_006",
+    "category": "connection",
+    "ja": "エクスターナルヘックス",
+    "reading": "えくすたーなるへっくす",
+    "en": "external hex connection",
+    "zh": "外六角连接",
+    "risk": true,
+    "note": "Connection type affects component compatibility."
+  },
+  {
+    "id": "connection_007",
+    "category": "connection",
+    "ja": "external hex",
+    "reading": "えくすたーなるへっくす",
+    "en": "external hex connection",
+    "zh": "外六角连接",
+    "risk": true,
+    "note": "Roman-letter variant."
   }
 ]

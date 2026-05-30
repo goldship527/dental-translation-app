@@ -27,6 +27,7 @@ Dental Lecture Translator は、日本語の音声または日本語原稿を入
 - 講演モード / Q&Aモード / 原稿モード
 - 翻訳スタイル選択
 - 外部JSON歯科用語辞書読み込み
+- インプラント関連用語、主要歯科メーカー名、主要インプラントシステム名、表面性状、接続様式の標準用語集登録
 - `risk: true` 用語、数値、mm、Ncm、左右、上下顎、禁忌、適応の要確認表示
 - 無音録音の誤認識対策
 - APIエラーの日本語表示
@@ -228,6 +229,17 @@ Gemini TTS:
 - RMS音量
 - 発話らしい音の割合
 
+閾値は環境変数で調整できる。未設定時は以下の既定値を使う。
+
+```env
+NEXT_PUBLIC_SILENCE_MIN_DURATION=0.6
+NEXT_PUBLIC_SILENCE_PEAK=0.025
+NEXT_PUBLIC_SILENCE_RMS=0.006
+NEXT_PUBLIC_SILENCE_SPEECH_RATIO=0.01
+```
+
+スマホブラウザ側で参照するため、変数名には `NEXT_PUBLIC_` プレフィックスを付ける。
+
 無音または短すぎる録音の場合はAPIへ送信せず、以下を表示する。
 
 ```text
@@ -294,6 +306,8 @@ public/data/dental-glossary.json
 
 - JSON追加だけで用語拡張可能
 - `category` で分類
+- 主なカテゴリーは `implant`, `surgery`, `bone`, `sinus`, `soft`, `prosthetics`, `occlusion`, `anatomy`, `complication`, `maintenance`, `digital`, `manufacturer`, `implant_system`, `implant_surface`, `connection`
+- メーカー名・製品システム名は原則として翻訳せず、固有名詞を保持する
 - `risk: true` を要確認表示対象にする
 - `note` で翻訳注意を管理
 - 将来的に管理画面を追加可能な構造にする

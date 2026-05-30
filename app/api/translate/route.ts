@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { formatApiError, getApiErrorStatus } from "@/lib/api-errors";
 import { getGeminiClient, getGeminiTranslationModel } from "@/lib/gemini";
+import { getRelevantGlossaryEntries } from "@/lib/glossary";
 import { getOpenAIClient, getOpenAITranslationModel } from "@/lib/openai";
 import { buildTranslationPrompt } from "@/lib/prompts";
 import type { ApiProvider, DentalGlossaryEntry, Mode, StylePreset } from "@/lib/types";
@@ -27,8 +28,8 @@ type TranslateBody = {
   text?: string;
   mode?: Mode;
   style?: StylePreset;
-  glossary?: DentalGlossaryEntry[];
   provider?: ApiProvider;
+  glossary?: unknown;
 };
 
 export async function POST(request: Request) {
@@ -39,11 +40,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "翻訳する日本語テキストがありません。" }, { status: 400 });
     }
 
+    const text = body.text.trim();
     const prompt = buildTranslationPrompt({
-      text: body.text.trim(),
+      text,
       mode: body.mode ?? "lecture",
       style: body.style ?? "professional",
-      glossary: body.glossary ?? []
+      glossary: [
+        ...(await getRelevantGlossaryEntries(text)),
+        ...getRelevantCustomGlossaryEntries(text, body.glossary)
+      ].slice(0, 80)
     });
 
     if (body.provider === "openai") {
@@ -52,11 +57,44 @@ export async function POST(request: Request) {
 
     return await translateWithGemini(prompt);
   } catch (error) {
+    console.error("[translate]", error);
     return NextResponse.json(
       { error: formatApiError(error, "翻訳APIでエラーが発生しました。") },
       { status: getApiErrorStatus(error) }
     );
   }
+}
+
+function getRelevantCustomGlossaryEntries(text: string, value: unknown): DentalGlossaryEntry[] {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .filter(isGlossaryEntryCandidate)
+    .map((entry) => ({
+      id: entry.id,
+      ja: entry.ja.trim(),
+      en: entry.en.trim(),
+      zh: entry.zh.trim(),
+      category: entry.category.trim(),
+      risk: entry.risk,
+      ...(entry.note ? { note: entry.note.trim() } : {})
+    }))
+    .filter((entry) => entry.ja && entry.en && entry.zh && entry.category && text.includes(entry.ja))
+    .slice(0, 50);
+}
+
+function isGlossaryEntryCandidate(value: unknown): value is DentalGlossaryEntry {
+  if (typeof value !== "object" || value === null) return false;
+  const candidate = value as Partial<DentalGlossaryEntry>;
+  return (
+    typeof candidate.id === "string" &&
+    typeof candidate.ja === "string" &&
+    typeof candidate.en === "string" &&
+    typeof candidate.zh === "string" &&
+    typeof candidate.category === "string" &&
+    typeof candidate.risk === "boolean" &&
+    (candidate.note === undefined || typeof candidate.note === "string")
+  );
 }
 
 async function translateWithGemini(prompt: string) {
