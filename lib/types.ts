@@ -4,6 +4,8 @@ export type StylePreset = "professional" | "business" | "concise" | "patient" | 
 
 export type ApiProvider = "gemini" | "openai";
 
+export type TranscriptionLanguage = "ja" | "en";
+
 export type SpeechLanguage = "en" | "zh";
 
 export type SpeechVoiceStyle = "standard" | "calm" | "lecture";

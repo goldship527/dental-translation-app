@@ -52,3 +52,35 @@ export function buildTranslationPrompt({
 
   return promptParts.join("\n");
 }
+
+export function buildEnglishToJapanesePrompt({
+  text,
+  glossary
+}: {
+  text: string;
+  glossary: DentalGlossaryEntry[];
+}) {
+  const glossaryLines = glossary
+    .map((entry) => {
+      const reading = entry.reading ? `, reading="${entry.reading}"` : "";
+      return `- en="${entry.en}", ja="${entry.ja}"${reading}, category=${entry.category}, risk=${entry.risk}`;
+    })
+    .join("\n");
+
+  const promptParts = [
+    "Translate the English dental lecture or Q&A transcript into natural Japanese for a Japanese dental professional.",
+    "Preserve technical terms, numerical values, anatomical directions, implant system names, product names, procedure names, contraindications, and indications accurately.",
+    "Do not add medical claims, diagnoses, treatment recommendations, or safety claims that are not present in the original.",
+    "Use clear Japanese that can be saved as meeting or lecture notes.",
+    "Return only JSON that matches the requested schema.",
+    ""
+  ];
+
+  if (glossaryLines) {
+    promptParts.push("Dental glossary preferences:", glossaryLines, "");
+  }
+
+  promptParts.push("English source text:", text);
+
+  return promptParts.join("\n");
+}

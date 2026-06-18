@@ -316,6 +316,7 @@
 - npm.cmd test 成功。3ファイル、8テストが成功。
 - npm.cmd run typecheck 成功。初回はサンドボックス制限で tsconfig.tsbuildinfo を書けず失敗したため、通常権限で再実行した。
 - npm.cmd run build 成功。
+
 - 開発サーバーを再起動し、http://localhost:3000 が 200 で返ることを確認した。
 ## 2026-05-29 用語集追加・インポート/エクスポートUI
 
@@ -547,3 +548,355 @@
 - npm.cmd run typecheck 成功。初回はサンドボックス制限で tsconfig.tsbuildinfo を書けず失敗したため、通常権限で再実行した。
 - npm.cmd run build 成功。
 
+
+## 2026-06-02 講演動画ローカライズ方針の追加
+
+### 作業内容
+- docs/spec.md に、Keynoteで録画された日本語講演MP4を英語ナレーション付きMP4へ変換する講演動画ローカライズ方針を追記した。
+- MVP入力をMac上の録画済みMP4、MVP出力を英語ナレーション入りMP4、英語字幕、日本語文字起こし、英訳原稿、要確認リスト、配布用パッケージと定義した。
+- 動画処理はMacローカルのffmpeg利用を基本とし、文字起こし、翻訳、TTSは既存のGemini / OpenAI連携を活用する方針にした。
+- 講演者に似た声の生成は、本人同意あり前提で後フェーズのAPI連携として扱うことを明記した。
+
+### 判断
+- 既存アプリの強みである文字起こし、歯科専門翻訳、用語集、要確認ポイント、TTSを活かして、講演動画の英語版作成システムへ拡張する。
+- 動画ファイルは容量と機密性のリスクが大きいため、動画全体を常に外部APIへ送るのではなく、ローカルで音声抽出・動画合成を行い、必要な音声・テキスト処理だけAPIを使う方針にする。
+- 初期MVPでは標準TTSを使い、講演者本人に似た声の生成は、同意状況と利用範囲を明確に管理できる段階で実装する。
+
+### 確認
+- 今回は仕様追記のみ。コード変更、依存関係追加、テスト実行はなし。
+
+## 2026-06-02 動画ローカライズ画面の初期実装
+
+### 作業内容
+- `app/video/page.tsx` を追加し、Keynote録画MP4を選択できる動画ローカライズ画面を作成した。
+- 選択したMP4のファイル名、容量、長さ、解像度を表示するようにした。
+- 選択したMP4をブラウザ内でプレビュー再生できるようにした。
+- メイン画面ヘッダーに `/video` への「動画」ボタンを追加した。
+- `app/globals.css` に動画ローカライズ画面用のスタイルを追加した。
+- docs/spec.md に、動画ローカライズ画面のMP4選択・ファイル情報表示を実装済み範囲として追記した。
+
+### 判断
+- 初回実装では、動画処理やAPI送信は行わず、ローカルMP4の選択と確認に限定した。
+- 次の実装単位は、Macローカルのffmpegを使った音声抽出の設計と実装にする。
+- 4GBを超える動画は初期MVPの検証対象外として、短い講演動画から確認する方針にした。
+
+### 確認
+- `npm.cmd test` 成功。3ファイル、8テストが成功。
+- `npm.cmd run typecheck` 成功。初回はサンドボックス制限で `tsconfig.tsbuildinfo` と `.next/types` を参照できず失敗したため、通常権限で再実行した。
+- `npm.cmd run build` 成功。`/video` が静的ページとして生成された。
+- 開発サーバーを起動し、`http://localhost:3000` と `http://localhost:3000/video` が 200 で返ることを確認した。
+- Browserプラグインによる視覚確認は、ブラウザ接続側の環境エラーで未実施。
+
+## 2026-06-02 ffmpeg確認とWAV音声抽出の追加
+
+### 作業内容
+- `.gitignore` に `work` を追加し、動画ローカライズの中間ファイルをGit管理対象外にした。
+- `lib/video.ts` を追加し、Macローカルの `ffmpeg` / `ffprobe` 確認と、MP4から16kHz mono WAVを抽出する処理を実装した。
+- `app/api/video/ffmpeg-check/route.ts` を追加し、画面からffmpeg利用可否を確認できるようにした。
+- `app/api/video/extract-audio/route.ts` を追加し、MP4を `work/video-localization/<jobId>` に保存してWAVへ抽出できるようにした。
+- `/video` 画面にffmpegステータス、再確認ボタン、音声抽出ボタン、抽出後の元動画コピーとWAVのパス表示を追加した。
+- docs/spec.md に、作業フォルダ、WAV抽出、元動画を上書きしない方針、英語版では日本語音声を完全差し替えする方針を追記した。
+
+### 判断
+- 日本語の元動画は保持し、英語版動画は別ファイルとして作成する。元動画は上書きしない。
+- 初期MVPでは、ブラウザ経由で扱える短い検証動画を対象にするため、アップロード上限を1GBにした。
+- 抽出音声は、文字起こしAPIへ渡しやすい 16kHz / mono / PCM WAV とした。
+- 次の実装単位は、抽出済みWAVを既存の文字起こし処理へ接続すること。
+
+### 確認
+- `npm.cmd test` 成功。3ファイル、8テストが成功。
+- `npm.cmd run typecheck` 成功。初回はサンドボックス制限で `tsconfig.tsbuildinfo` と `.next/types` を参照できず失敗したため、通常権限で再実行した。
+- `npm.cmd run build` 成功。`/api/video/extract-audio` と `/api/video/ffmpeg-check` がAPIルートとして生成された。
+- 開発サーバー上で `http://localhost:3000/video` が 200 で返ることを確認した。
+- 開発サーバー上で `http://localhost:3000/api/video/ffmpeg-check` が 200 で返ることを確認した。現在のWindows環境では `ffmpeg` / `ffprobe` 未導入のため `ready:false`。
+- 実際のWAV抽出は、Mac側に `ffmpeg` をインストールした環境で確認する必要がある。
+
+## 2026-06-02 抽出済みWAVの全文文字起こし接続
+
+### 作業内容
+- 既存の `/api/transcribe` 内にあったGemini / OpenAI文字起こし処理を `lib/transcription.ts` へ切り出した。
+- `app/api/transcribe/route.ts` を、共通文字起こし関数を使う形へ整理した。
+- `lib/video.ts` に、`jobId` とWAVファイル名から `work/video-localization` 配下の抽出済みWAVだけを読み込む関数を追加した。
+- `app/api/video/transcribe-audio/route.ts` を追加し、抽出済みWAVをGemini / OpenAIで日本語全文文字起こしできるようにした。
+- `/video` 画面に文字起こしAPI選択、全文文字起こしボタン、編集可能な日本語全文テキスト欄を追加した。
+- docs/spec.md に、抽出済みWAVから全文文字起こしまでを実装済み範囲として追記した。
+
+### 判断
+- まずは全文文字起こしとして表示し、スライド単位・字幕単位の分割は次フェーズで扱う。
+- 動画文字起こしAPIでは、作業フォルダ外のパスを直接指定できないよう、`jobId` とWAVファイル名から安全に解決する方針にした。
+- 録音音声と動画抽出音声で文字起こしプロンプトを揃えるため、共通関数へ切り出した。
+
+### 確認
+- `npm.cmd test` 成功。3ファイル、8テストが成功。
+- `npm.cmd run typecheck` 成功。初回はサンドボックス制限で `tsconfig.tsbuildinfo` と `.next/types` を参照できず失敗したため、ビルド後に通常権限で再実行した。
+- `npm.cmd run build` 成功。`/api/video/transcribe-audio` がAPIルートとして生成された。
+- 開発サーバー上で `http://localhost:3000/video` が 200 で返ることを確認した。
+- `http://localhost:3000/api/video/transcribe-audio` は空リクエストに対して 400 を返し、入力チェックが働くことを確認した。
+- 実際の動画WAV文字起こしは、Mac側で `ffmpeg` とAPIキーを設定した環境で確認する必要がある。
+
+## 2026-06-02 動画文字起こし全文の英訳接続
+
+### 作業内容
+- `/video` 画面に、日本語全文文字起こしを既存の `/api/translate` へ送って英訳する処理を追加した。
+- 英訳は `mode: script`、`style: professional` で実行するようにした。
+- 追加用語集のうち、全文文字起こしに含まれる用語を翻訳リクエストへ渡すようにした。
+- 英訳結果を編集可能な「英訳原稿」欄として表示するようにした。
+- 日本語文字起こしを編集した場合は、古い英訳原稿をクリアするようにした。
+- docs/spec.md に、全文文字起こしから全文英訳までを実装済み範囲として追記した。
+
+### 判断
+- 初期MVPでは、全文をまとめて英訳する。字幕単位・スライド単位への分割は後フェーズで扱う。
+- 既存の翻訳APIと歯科用語集プロンプトを活用し、新しい動画専用翻訳APIは追加しない。
+- 英語版動画へ進む前に、人が全文の文字起こしと英訳を確認・修正できる形を優先する。
+
+### 確認
+- `npm.cmd test` 成功。3ファイル、8テストが成功。
+- `npm.cmd run typecheck` 成功。初回はサンドボックス制限で `tsconfig.tsbuildinfo` と `.next/types` を参照できず失敗したため、ビルド後に通常権限で再実行した。
+- `npm.cmd run build` 成功。
+- 開発サーバー上で `http://localhost:3000/video` が 200 で返ることを確認した。
+- `/api/translate` は空リクエストに対して 400 を返し、入力チェックが働くことを確認した。
+- 実際の全文英訳は、Mac側で `ffmpeg`、APIキー、短い検証MP4を用意した環境で確認する必要がある。
+
+## 2026-06-02 標準TTS英語ナレーション生成の追加
+
+### 作業内容
+- 既存の `/api/speech` 内にあったTTS生成処理を `lib/speech.ts` へ切り出した。
+- `/api/speech` を、共通TTS生成関数を使う形へ整理した。
+- `lib/video.ts` に、英語ナレーション音声を `work/video-localization/<jobId>` へ保存し、読み出す関数を追加した。
+- `app/api/video/generate-narration/route.ts` を追加し、英訳原稿から標準TTSの英語ナレーション音声を生成して保存できるようにした。
+- `app/api/video/narration-audio/route.ts` を追加し、保存済みナレーション音声をブラウザで再生できるようにした。
+- `/video` 画面に「英語ナレーション生成」ボタン、音声プレイヤー、保存パス表示を追加した。
+- docs/spec.md に、標準TTS英語ナレーション生成を実装済み範囲として追記した。
+
+### 判断
+- 初期MVPでは、全文英訳を標準TTSで1本の英語音声として生成する。
+- 講演者本人に似た声のAPI連携は後フェーズに残す。
+- 既存の通常読み上げと動画ナレーションでTTS処理を共通化し、provider別の実装差分を1箇所に寄せた。
+- 長文TTSはAPI制限に当たる可能性があるため、初期MVPでは4096文字以内の短い検証動画を対象にする。
+
+### 確認
+- `npm.cmd test` 成功。3ファイル、8テストが成功。
+- `npm.cmd run typecheck` 成功。初回はサンドボックス制限で `tsconfig.tsbuildinfo` と `.next/types` を参照できず失敗したため、ビルド後に通常権限で再実行した。
+- `npm.cmd run build` 成功。`/api/video/generate-narration` と `/api/video/narration-audio` がAPIルートとして生成された。
+- 開発サーバー上で `http://localhost:3000/video` が 200 で返ることを確認した。
+- `/api/video/generate-narration` は空リクエストに対して 400 を返し、入力チェックが働くことを確認した。
+- 実際のTTS音声生成は、Mac側でAPIキーと短い英訳原稿を用意した環境で確認する必要がある。
+
+## 2026-06-02 英語版MP4書き出しの追加
+
+### 作業内容
+- `lib/video.ts` に、元動画の映像トラックと英語ナレーション音声トラックをffmpegで合成する処理を追加した。
+- `app/api/video/render-english-video/route.ts` を追加し、`work/video-localization/<jobId>/english-version.mp4` として英語版MP4を書き出せるようにした。
+- `app/api/video/rendered-video/route.ts` を追加し、保存済み英語版MP4をブラウザでプレビュー再生できるようにした。
+- `/video` 画面に「英語版MP4を書き出し」ボタン、英語版MP4プレビュー、保存パス表示を追加した。
+- docs/spec.md に、字幕なしの英語版MP4書き出しを実装済み範囲として追記した。
+
+### 判断
+- 初期MVPでは字幕なしで、元動画の映像と英語ナレーション音声のみを合成する。
+- ffmpegでは `0:v:0` と `1:a:0` だけをmapし、元動画の日本語音声トラックをmapしないことで完全差し替えにする。
+- 元の日本語MP4は保持し、英語版MP4は `english-version.mp4` として別ファイルにする。
+- 次の実装単位は、英語字幕SRT生成、またはMac実機での短い検証MP4を使った一連の動作確認。
+
+### 確認
+- `npm.cmd test` 成功。3ファイル、8テストが成功。
+- `npm.cmd run typecheck` 成功。初回はサンドボックス制限で `tsconfig.tsbuildinfo` と `.next/types` を参照できず失敗したため、ビルド後に通常権限で再実行した。
+- `npm.cmd run build` 成功。`/api/video/render-english-video` と `/api/video/rendered-video` がAPIルートとして生成された。
+- 開発サーバー上で `http://localhost:3000/video` が 200 で返ることを確認した。
+- `/api/video/render-english-video` は空リクエストに対して 400 を返し、入力チェックが働くことを確認した。
+- 実際の英語版MP4書き出しは、Mac側で `ffmpeg`、APIキー、短い検証MP4を用意した環境で確認する必要がある。
+
+## 2026-06-02 Mac実機検証手順の追加
+
+### 作業内容
+- `docs/video-localization-mac-test.md` を追加し、Mac上で講演動画ローカライズMVPを検証する手順を整理した。
+- ffmpegインストール、APIキー設定、開発サーバー起動、MP4選択、WAV抽出、全文文字起こし、全文英訳、標準TTSナレーション生成、英語版MP4書き出しまでの確認手順をまとめた。
+- `ffprobe` で英語版MP4の音声トラックを確認する手順を追記した。
+- docs/spec.md に、Mac実機検証手順書への参照を追記した。
+
+### 判断
+- 字幕や分割に進む前に、短い検証MP4で一連の流れをMac実機確認する。
+- 検証では、元のKeynote MP4が上書きされないこと、英語版MP4に日本語音声が残っていないことを明確な成功条件にした。
+
+### 確認
+- ドキュメント追加のみ。コード変更なし、テスト実行なし。
+
+## 2026-06-02 Windows実機検証手順の追加
+
+### 作業内容
+- `docs/video-localization-windows-test.md` を追加し、Macがない状態でもWindows上で講演動画ローカライズMVPを検証できる手順を整理した。
+- Windowsでのffmpegインストール、PowerShellでの確認、APIキー設定、開発サーバー起動、`/video` 画面での通し確認をまとめた。
+- `ffprobe` で英語版MP4の音声トラックを確認するWindows向けコマンドを追記した。
+- docs/spec.md に、Windows実機検証手順書への参照を追記した。
+- `lib/video.ts` に、WindowsでPATHにffmpegが反映されていない場合でも、`winget` の一般的な展開先から `ffmpeg.exe` / `ffprobe.exe` を探すフォールバックを追加した。
+- ffmpeg未検出時のエラーメッセージを、MacだけでなくWindowsでも自然に読める表現へ変更した。
+
+### 判断
+- Mac向けソフトウェアとして設計しつつ、現時点のWebアプリMVPはWindowsでも確認できるようにする。
+- Windows検証では、ffmpegのPATH反映のためPowerShellと開発サーバーを開き直す点を明示する。
+- 検証では引き続き、元のKeynote MP4が上書きされないこと、英語版MP4に日本語音声が残っていないことを成功条件にする。
+
+### 確認
+- `winget install Gyan.FFmpeg --accept-package-agreements --accept-source-agreements` でFFmpeg 8.1.1をWindows環境へインストールした。
+- `npm.cmd test` 成功。3ファイル、8テストが成功。
+- `npm.cmd run typecheck` 成功。初回はサンドボックス制限で `tsconfig.tsbuildinfo` を書けず失敗したため、通常権限で再実行した。
+- `npm.cmd run build` 成功。
+- 開発サーバーを起動し、`http://localhost:3000/video` が 200 で返ることを確認した。
+- `http://localhost:3000/api/video/ffmpeg-check` が `ready:true` を返し、`ffmpeg` と `ffprobe` の実体パスを認識できることを確認した。
+- 1秒の合成MP4を作成し、`/api/video/extract-audio` でWAV抽出できることを確認した。
+- テスト用ナレーションWAVを作成し、`/api/video/render-english-video` で英語版MP4を書き出せることを確認した。
+- `ffprobe` で英語版MP4にVideo stream 1本、Audio stream 1本だけがあることを確認した。
+- 文字起こし、全文英訳、TTS生成の実API確認は、APIキーと実際の短い検証MP4を用意して行う。
+
+## 2026-06-03 検証用サンプルMP4の作成
+
+### 作業内容
+- `work/samples/dental-localization-sample-ja.mp4` を作成した。
+- 架空の歯科講演スライド3枚と、Windowsの日本語TTS `Microsoft Haruka Desktop` による日本語ナレーションを合成した。
+- 確認用の日本語原稿を `work/samples/sample-transcript-ja.txt` として保存した。
+- 患者情報、個人情報、実在クリニック名、会社機密を含まない検証専用素材にした。
+
+### サンプル仕様
+- 長さ: 約33.7秒
+- 解像度: 1280x720
+- 映像: H.264 / 25fps
+- 音声: AAC / mono
+- 内容: 上顎臼歯部インプラント埋入、骨幅6mm、骨高径10mm、初期固定35Ncmなどの架空講演
+
+### 確認
+- `ffprobe` でサンプルMP4の長さ、映像、音声を確認した。
+- 開発サーバーを起動し、`http://localhost:3000/video` が 200 で返ることを確認した。
+- `/api/video/extract-audio` にサンプルMP4を送信し、WAV抽出が成功することを確認した。
+- 文字起こし、全文英訳、TTS生成の実API確認は次の作業で行う。
+
+## 2026-06-05 サンプルMP4での通し確認と英語字幕SRT生成の追加
+
+### 作業内容
+- `work/samples/dental-localization-sample-ja.mp4` を使い、Geminiで音声抽出、全文文字起こし、全文英訳、英語ナレーション生成、英語版MP4書き出しまで通し確認した。
+- PowerShellのJSONデコードで日本語保存結果が文字化けしたため、Node `fetch` で再実行し、UTF-8の文字起こし・英訳ファイルを `work/samples` に保存した。
+- Windowsで `ffmpeg.exe` のPATH確認が待ちっぱなしになるケースを避けるため、`lib/video.ts` で `winget` の実体パス候補を先に使うようにした。
+- `lib/subtitles.ts` を追加し、英訳原稿からSRT形式の英語字幕を生成できるようにした。
+- `/api/video/generate-subtitles` と `/api/video/subtitles` を追加し、SRTを作業フォルダへ保存して取得できるようにした。
+- `/video` 画面に「英語字幕SRT生成」ボタン、SRT表示、SRTファイルパス表示を追加した。
+- SRT生成では、初期MVPとして英訳原稿を文単位で分割し、動画長に合わせてタイミングを割り当てる方式にした。
+- 数値と単位が改行で分離しないよう、`6 mm` や `35 Ncm` をなるべく同じ字幕行に保持する処理を追加した。
+
+### 判断
+- 字幕の厳密な単語同期は後フェーズとし、まず配布パッケージ用の初期SRTを出力できることを優先する。
+- SRTファイルも `work/video-localization/<jobId>` 配下だけに保存し、作業フォルダ外の任意パスを読ませない。
+- 生成済み英訳を編集した場合は、古いSRT、ナレーション、英語版MP4をクリアする。
+
+### 確認
+- `npm.cmd test` 成功。4ファイル、11テストが成功。
+- `npm.cmd run typecheck` 成功。
+- `npm.cmd run build` 成功。
+- `http://localhost:3001/api/video/ffmpeg-check` が `ready:true` を返すことを確認した。
+- サンプルMP4で、`/api/video/extract-audio`、`/api/video/transcribe-audio`、`/api/translate`、`/api/video/generate-narration`、`/api/video/render-english-video` が成功した。
+- 書き出した英語版MP4は `ffprobe` で映像1本・音声1本だけであることを確認した。
+- サンプル英訳で `/api/video/generate-subtitles` が `english-subtitles.srt` を生成できることを確認した。
+
+## 2026-06-05 配布用パッケージ作成の追加
+
+### 作業内容
+- `lib/video.ts` に、動画ローカライズ作業フォルダ内へ配布用 `package` フォルダを作る処理を追加した。
+- `/api/video/create-package` を追加し、英語版MP4、英語字幕SRT、日本語文字起こし、英訳原稿、要確認リスト、README、manifestをまとめられるようにした。
+- `/video` 画面に「配布用パッケージ作成」ボタンと、生成されたファイル一覧の表示を追加した。
+- 配布用パッケージには元の日本語MP4を含めず、`manifest.json` に `includesOriginalJapaneseVideo: false` を明記するようにした。
+
+### 判断
+- 初期MVPではZIP化せず、まずOSに依存しにくいフォルダ形式で出力する。
+- 元の日本語MP4は作業用コピーとして保持するが、配布用パッケージには入れない。
+- 要確認リストは固定Markdownとして出力し、数値、単位、左右、上下顎、禁忌、適応、字幕タイミング、元日本語音声の残存確認を人が確認できるようにする。
+
+### 確認
+- `npm.cmd test` 成功。4ファイル、11テストが成功。
+- `npm.cmd run typecheck` 成功。
+- `npm.cmd run build` 成功。
+- サンプルジョブ `ee803dff-f52a-456e-8a1c-d26cbb43458a` で `/api/video/create-package` が成功した。
+- `work/video-localization/ee803dff-f52a-456e-8a1c-d26cbb43458a/package` に、`english-version.mp4`、`english-subtitles.srt`、`japanese-transcript.txt`、`english-script.txt`、`review-checklist.md`、`README.md`、`manifest.json` が作成されることを確認した。
+
+## 2026-06-05 配布用パッケージZIPダウンロードの追加
+
+### 作業内容
+- `lib/zip.ts` を追加し、外部依存を増やさずに配布用ファイルをZIPへまとめられるようにした。
+- `/api/video/package-zip` を追加し、作成済み `package` フォルダをZIPとしてダウンロードできるようにした。
+- `/video` 画面の配布用パッケージ欄に「ZIPをダウンロード」リンクを追加した。
+
+### 判断
+- 初期MVPのZIPは圧縮なしの標準ZIPとする。MP4は圧縮しても容量がほぼ減らないため、速度と安定性を優先する。
+- ZIPには既知の配布ファイルだけを入れ、元の日本語MP4や作業用WAVなどは含めない。
+- 大容量対応のストリーミングZIPは後フェーズとし、まず短い検証動画の配布パッケージを確実に扱えるようにする。
+
+### 確認
+- `npm.cmd test` 成功。5ファイル、12テストが成功。
+- `npm.cmd run typecheck` 成功。
+- `npm.cmd run build` 成功。
+- サンプルパッケージに対して `/api/video/package-zip` を実行し、`downloaded-package-test.zip` を保存できることを確認した。
+- `Expand-Archive` でZIPを展開し、`english-version.mp4`、`english-subtitles.srt`、`japanese-transcript.txt`、`english-script.txt`、`review-checklist.md`、`README.md`、`manifest.json` が含まれることを確認した。
+
+## 2026-06-05 字幕焼き込み版MP4と配布形式選択の追加
+
+### 作業内容
+- `lib/video.ts` に、英語版MP4へ英語字幕SRTを焼き込む `renderSubtitledVideo` を追加した。
+- `/api/video/render-subtitled-video` を追加し、`english-version-subtitled.mp4` を作成できるようにした。
+- `/video` 画面に「字幕焼き込みMP4作成」ボタン、字幕焼き込み版MP4プレビュー、配布形式選択を追加した。
+- 配布形式は、SRT同梱版と字幕焼き込み版から選べるようにした。
+- 字幕焼き込み版を選んだ場合、配布用パッケージには焼き込み済みMP4を `english-version.mp4` として入れ、SRTは同梱しないようにした。
+- 配布パッケージ作成前に既知ファイルを削除し、前回作成したSRTなどが別モードのパッケージに残らないようにした。
+
+### 判断
+- SRT同梱版は、字幕を後から修正・差し替えやすい配布形式として残す。
+- 字幕焼き込み版は、SRTを読み込めない再生環境向けに追加する。
+- 初期MVPでは字幕焼き込みの細かなフォント設定は行わず、FFmpegの標準 `subtitles` フィルタで確実に焼き込む。
+
+### 確認
+- `npm.cmd test` 成功。5ファイル、12テストが成功。
+- `npm.cmd run typecheck` 成功。
+- `npm.cmd run build` 成功。
+- サンプルジョブ `ee803dff-f52a-456e-8a1c-d26cbb43458a` で `/api/video/render-subtitled-video` が成功し、`english-version-subtitled.mp4` が作成されることを確認した。
+- `ffprobe` で字幕焼き込み版MP4に映像1本・音声1本があることを確認した。
+- 焼き込み版を選んだ配布パッケージとZIPを作成し、ZIP展開後に `english-subtitles.srt` が含まれず、焼き込み版MP4が `english-version.mp4` として含まれることを確認した。
+
+## 2026-06-17 英語音声取得から日本語メモ保存までの準備
+
+### 作業内容
+- `/api/transcribe` に `sourceLanguage` を追加し、既存の日本語音声に加えて英語音声の文字起こしに対応した。
+- `lib/transcription.ts` に汎用 `transcribeAudio` を追加し、既存の `transcribeJapaneseAudio` は動画ローカライズ互換のため残した。
+- `/api/translate-to-japanese` を追加し、英語文字起こしを日本語メモへ翻訳できるようにした。
+- メイン画面に「英語→日本語メモ」パネルを追加した。
+- 英語録音開始、英語録音停止、英語文字起こし、日本語化、端末内保存、TXTダウンロードを行えるUIを追加した。
+- 英語→日本語メモ履歴はlocalStorageに最大50件保存するようにした。
+- `docs/spec.md` に英語入力ラインとPhase 5準備実装を追記した。
+
+### 判断
+- 今回は完全な同時通訳ではなく、短時間録音単位の疑似リアルタイム化の土台として実装した。
+- 既存の日本語→英語/中国語翻訳は壊さないため、英語→日本語は専用APIと専用UIに分けた。
+- サーバー側には英語原文や日本語メモを保存せず、端末内localStorageとTXTダウンロードに限定した。
+- 患者情報、実在医院名、会社非公開情報を入力しない運用前提は既存方針を維持する。
+
+### 確認
+- `npm.cmd run typecheck` に成功した。初回はサンドボックス制限で `tsconfig.tsbuildinfo` を書けず失敗したため、許可付きで再実行した。
+- `npm.cmd test` に成功した。5ファイル、12テストが成功。
+- `npm.cmd run build` に成功した。`/api/translate-to-japanese` がAPIルートとして生成された。
+- 開発サーバーを起動し、`http://localhost:3000/` が HTTP 200 を返すことを確認した。
+- `/api/translate-to-japanese` は空リクエストに対して 400 と「日本語化する英語テキストがありません。」を返すことを確認した。
+- `/api/transcribe` は英語指定の正しいmultipartで音声ファイルなしの場合、400 と「音声ファイルが見つかりません。」を返すことを確認した。
+
+## 2026-06-18 続き作業の確認と入力エラー処理の整理
+
+### 作業内容
+- 2026-06-17時点の英語音声取得から日本語メモ保存までの実装を引き継ぎ、未コミット差分の状態を確認した。
+- `npm.cmd test`、`npm.cmd run typecheck`、`npm.cmd run build` が通ることを確認した。
+- 開発サーバーを起動し、`http://localhost:3000/`、`http://localhost:3000/video`、`/api/health` が 200 を返すことを確認した。
+- `/api/translate-to-japanese` の空入力が 400 と「日本語化する英語テキストがありません。」を返すことを確認した。
+- `/api/transcribe` に Content-Type なしのPOSTが来た場合、サーバー例外の500ではなく、400 と「音声ファイルが見つかりません。」を返すようにした。
+- `/api/video/ffmpeg-check` が `ready:true` を返し、Windows環境の ffmpeg / ffprobe を検出できることを確認した。
+
+### 判断
+- 通常UIからの文字起こしリクエストは multipart だが、API直叩きや異常リクエストでもユーザー向けに自然な400を返す方が安全と判断した。
+- 今回は入力エラー処理の小修正に留め、英語→日本語メモUIや動画ローカライズの仕様は変更していない。
+
+### 確認
+- `npm.cmd test` 成功。5ファイル、12テストが成功。
+- `npm.cmd run typecheck` 成功。
+- `npm.cmd run build` 成功。
+- `curl.exe -X POST http://localhost:3000/api/transcribe` が 400 と「音声ファイルが見つかりません。」を返すことを確認した。

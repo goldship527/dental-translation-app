@@ -4,6 +4,7 @@ import {
   AlertTriangle,
   BookOpen,
   Clipboard,
+  Download,
   FileText,
   History as HistoryIcon,
   Languages,
@@ -16,7 +17,8 @@ import {
   Square,
   Star,
   Stethoscope,
-  Trash2
+  Trash2,
+  Video
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -90,6 +92,7 @@ type RecorderState = {
   stream: MediaStream;
   chunks: Float32Array[];
   sampleRate: number;
+  target: RecordingTarget;
 };
 
 type AudioStats = {
@@ -101,11 +104,23 @@ type AudioStats = {
 
 type SpeechTarget = "english" | "chinese";
 
+type RecordingTarget = "japanese" | "englishToJapanese";
+
+type EnglishJapaneseNote = {
+  id: string;
+  english: string;
+  japanese: string;
+  provider: ApiProvider;
+  savedAt: string;
+};
+
 const lastResultStorageKey = "dental-lecture-translator:last-result";
 const translationHistoryStorageKey = "dental-lecture-translator:history";
 const translationFavoritesStorageKey = "dental-lecture-translator:favorites";
+const englishJapaneseNotesStorageKey = "dental-lecture-translator:english-japanese-notes";
 const maxTranslationHistoryItems = 20;
 const maxTranslationFavoriteItems = 50;
+const maxEnglishJapaneseNotes = 50;
 
 const silenceThresholds = {
   minDuration: getPublicNumberEnv("NEXT_PUBLIC_SILENCE_MIN_DURATION", 0.6),
@@ -122,11 +137,15 @@ export default function Home() {
   const [speechSpeed, setSpeechSpeed] = useState(1);
   const [isPreparingRecording, setIsPreparingRecording] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [recordingTarget, setRecordingTarget] = useState<RecordingTarget | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState("");
   const [japaneseText, setJapaneseText] = useState("");
   const [englishText, setEnglishText] = useState("");
   const [chineseText, setChineseText] = useState("");
+  const [englishInputText, setEnglishInputText] = useState("");
+  const [japaneseNoteText, setJapaneseNoteText] = useState("");
+  const [englishJapaneseNotes, setEnglishJapaneseNotes] = useState<EnglishJapaneseNote[]>([]);
   const [lastTranslatedJapaneseText, setLastTranslatedJapaneseText] = useState("");
   const [apiAvailability, setApiAvailability] = useState<ApiAvailability | null>(null);
   const [glossary, setGlossary] = useState<DentalGlossaryEntry[]>([]);
@@ -151,6 +170,7 @@ export default function Home() {
     setCustomGlossary(loadCustomGlossary());
     setTranslationHistory(loadTranslationHistory());
     setTranslationFavorites(loadTranslationFavorites());
+    setEnglishJapaneseNotes(loadEnglishJapaneseNotes());
 
     fetch("/api/health")
       .then((response) => {
@@ -272,22 +292,29 @@ export default function Home() {
     [customGlossary, finishRequest, isActiveRequest, mode, provider, startRequest, style]
   );
 
-  const startRecording = async () => {
+  const startRecording = async (target: RecordingTarget = "japanese") => {
     setError("");
-    setEnglishText("");
-    setChineseText("");
-    setLastTranslatedJapaneseText("");
+    if (target === "japanese") {
+      setEnglishText("");
+      setChineseText("");
+      setLastTranslatedJapaneseText("");
+    } else {
+      setJapaneseNoteText("");
+    }
     setIsPreparingRecording(true);
+    setRecordingTarget(target);
     stopSpeech();
 
     if (!navigator.mediaDevices?.getUserMedia) {
       setIsPreparingRecording(false);
+      setRecordingTarget(null);
       setError("このブラウザではマイク録音を利用できません。");
       return;
     }
 
     if (!("AudioWorkletNode" in window)) {
       setIsPreparingRecording(false);
+      setRecordingTarget(null);
       setError("このブラウザではAudioWorkletによる録音を利用できません。別のブラウザでお試しください。");
       return;
     }
@@ -335,7 +362,8 @@ export default function Home() {
         source,
         stream,
         chunks,
-        sampleRate: audioContext.sampleRate
+        sampleRate: audioContext.sampleRate,
+        target
       };
       audioContext = null;
       stream = null;
@@ -345,6 +373,7 @@ export default function Home() {
       stream?.getTracks().forEach((track) => track.stop());
       await audioContext?.close().catch(() => undefined);
       setIsPreparingRecording(false);
+      setRecordingTarget(null);
       setError(
         reason instanceof Error
           ? getRecordingStartErrorMessage(reason)
@@ -359,6 +388,7 @@ export default function Home() {
 
     setIsBusy(true);
     setIsRecording(false);
+    setRecordingTarget(null);
     recorderRef.current = null;
     stopRecorder(recorder);
     await recorder.audioContext.close().catch(() => undefined);
@@ -372,6 +402,11 @@ export default function Home() {
     }
 
     const audioBlob = encodeWav(samples, recorder.sampleRate);
+    if (recorder.target === "englishToJapanese") {
+      await transcribeEnglishToJapaneseRecording(audioBlob, stats.durationSeconds);
+      return;
+    }
+
     await transcribeRecording(audioBlob, stats.durationSeconds);
   };
 
@@ -387,6 +422,7 @@ export default function Home() {
       const formData = new FormData();
       formData.append("audio", audioBlob, "speech.wav");
       formData.append("provider", provider);
+      formData.append("sourceLanguage", "ja");
       formData.append("durationSeconds", durationSeconds.toFixed(2));
 
       const response = await fetch("/api/transcribe", {
@@ -420,6 +456,103 @@ export default function Home() {
       finishRequest(controller);
     }
   };
+
+  const transcribeEnglishToJapaneseRecording = async (audioBlob: Blob, durationSeconds: number) => {
+    if (!audioBlob.size) {
+      setIsBusy(false);
+      setError("録音データが空でした。もう一度録音してください。");
+      return;
+    }
+
+    const controller = startRequest();
+    try {
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "english-speech.wav");
+      formData.append("provider", provider);
+      formData.append("sourceLanguage", "en");
+      formData.append("durationSeconds", durationSeconds.toFixed(2));
+
+      const transcriptionResponse = await fetch("/api/transcribe", {
+        method: "POST",
+        signal: controller.signal,
+        body: formData
+      });
+      const transcriptionData = (await transcriptionResponse.json()) as { text?: string; error?: string };
+
+      if (!transcriptionResponse.ok) {
+        throw new Error(transcriptionData.error ?? "英語文字起こしに失敗しました。");
+      }
+
+      const english = transcriptionData.text?.trim() ?? "";
+      if (!isActiveRequest(controller)) return;
+      if (!english) {
+        setIsBusy(false);
+        setError("英語音声が検出されませんでした。もう一度録音してください。");
+        return;
+      }
+
+      setEnglishInputText(english);
+      await translateEnglishToJapanese(english, controller);
+    } catch (reason) {
+      if (isAbortError(reason)) return;
+      if (isActiveRequest(controller)) {
+        setError(reason instanceof Error ? reason.message : "英語音声の処理でエラーが発生しました。");
+      }
+    } finally {
+      if (isActiveRequest(controller)) {
+        setIsBusy(false);
+      }
+      finishRequest(controller);
+    }
+  };
+
+  const translateEnglishToJapanese = useCallback(
+    async (text: string, existingController?: AbortController) => {
+      const controller = existingController ?? startRequest();
+      if (!existingController) {
+        setIsBusy(true);
+        setError("");
+      }
+
+      try {
+        const response = await fetch("/api/translate-to-japanese", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            text,
+            provider
+          })
+        });
+
+        const data = (await response.json()) as { japanese?: string; error?: string };
+        if (!response.ok) throw new Error(data.error ?? "英語から日本語への翻訳に失敗しました。");
+
+        if (!isActiveRequest(controller)) return;
+        const japanese = data.japanese ?? "";
+        setJapaneseNoteText(japanese);
+        const note = createEnglishJapaneseNote({
+          english: text,
+          japanese,
+          provider
+        });
+        setEnglishJapaneseNotes((current) => saveEnglishJapaneseNotes(upsertEnglishJapaneseNote(current, note)));
+      } catch (reason) {
+        if (isAbortError(reason)) return;
+        if (isActiveRequest(controller)) {
+          setError(reason instanceof Error ? reason.message : "英語から日本語への翻訳処理でエラーが発生しました。");
+        }
+      } finally {
+        if (!existingController) {
+          if (isActiveRequest(controller)) {
+            setIsBusy(false);
+          }
+          finishRequest(controller);
+        }
+      }
+    },
+    [finishRequest, isActiveRequest, provider, startRequest]
+  );
 
   const translateScript = async () => {
     if (!japaneseText.trim()) {
@@ -505,6 +638,58 @@ export default function Home() {
     if (!translationFavorites.length) return;
     if (!window.confirm("お気に入りをすべて削除しますか？")) return;
     setTranslationFavorites(saveTranslationFavorites([]));
+  };
+
+  const translateEnglishInput = async () => {
+    const text = englishInputText.trim();
+    if (!text) {
+      setError("日本語化する英語テキストを入力してください。");
+      return;
+    }
+
+    await translateEnglishToJapanese(text);
+  };
+
+  const saveCurrentEnglishJapaneseNote = () => {
+    const english = englishInputText.trim();
+    const japanese = japaneseNoteText.trim();
+    if (!english || !japanese) return;
+
+    const note = createEnglishJapaneseNote({ english, japanese, provider });
+    setEnglishJapaneseNotes((current) => saveEnglishJapaneseNotes(upsertEnglishJapaneseNote(current, note)));
+  };
+
+  const deleteEnglishJapaneseNote = (itemId: string) => {
+    setEnglishJapaneseNotes((current) => saveEnglishJapaneseNotes(current.filter((item) => item.id !== itemId)));
+  };
+
+  const clearEnglishJapaneseNotes = () => {
+    if (!englishJapaneseNotes.length) return;
+    if (!window.confirm("英語→日本語メモ履歴をすべて削除しますか？")) return;
+    setEnglishJapaneseNotes(saveEnglishJapaneseNotes([]));
+  };
+
+  const restoreEnglishJapaneseNote = (item: EnglishJapaneseNote) => {
+    setError("");
+    setEnglishInputText(item.english);
+    setJapaneseNoteText(item.japanese);
+    setProvider(item.provider);
+  };
+
+  const downloadCurrentEnglishJapaneseNote = () => {
+    const english = englishInputText.trim();
+    const japanese = japaneseNoteText.trim();
+    if (!english && !japanese) return;
+
+    downloadTextFile(
+      `english-japanese-note-${formatDateForFilename(new Date())}.txt`,
+      formatEnglishJapaneseNoteText({
+        english,
+        japanese,
+        provider,
+        savedAt: new Date().toISOString()
+      })
+    );
   };
 
   const isTranslationPossiblyStale = Boolean(
@@ -597,13 +782,23 @@ export default function Home() {
           </div>
         </div>
         <div className="topActions">
+          <Link className="secondaryButton navButton" href="/video">
+            <Video size={18} />
+            動画
+          </Link>
           <Link className="secondaryButton navButton" href="/glossary">
             <BookOpen size={18} />
             用語集
           </Link>
           <div className="statusPill">
             <span className={`statusDot ${isRecording ? "recording" : ""}`} />
-            {isRecording ? "録音中" : isPreparingRecording ? "マイク確認中" : "準備完了"}
+            {isRecording
+              ? recordingTarget === "englishToJapanese"
+                ? "英語録音中"
+                : "録音中"
+              : isPreparingRecording
+                ? "マイク確認中"
+                : "準備完了"}
           </div>
         </div>
       </header>
@@ -693,9 +888,9 @@ export default function Home() {
         <section className="card panel">
           <div className="controls">
             <button
-              className={`primaryButton ${isRecording ? "active" : ""}`}
+              className={`primaryButton ${isRecording && recordingTarget === "japanese" ? "active" : ""}`}
               type="button"
-              onClick={startRecording}
+              onClick={() => startRecording("japanese")}
               disabled={isRecording || isPreparingRecording || isBusy}
             >
               <Mic size={22} />
@@ -705,7 +900,7 @@ export default function Home() {
               className="secondaryButton"
               type="button"
               onClick={stopRecording}
-              disabled={!isRecording}
+              disabled={!isRecording || recordingTarget !== "japanese"}
             >
               <MicOff size={22} />
               録音停止
@@ -737,6 +932,109 @@ export default function Home() {
               処理中です
             </p>
           ) : null}
+        </section>
+
+        <section className="card panel englishNotePanel">
+          <div className="historyHeader">
+            <div>
+              <h2 className="sectionTitle">
+                <Languages size={18} />
+                英語→日本語メモ
+              </h2>
+              <p className="sectionSub">英語音声を文字起こしし、日本語メモとして端末内に保存します。</p>
+            </div>
+            <button
+              className="copyButton smallIconButton"
+              type="button"
+              onClick={clearEnglishJapaneseNotes}
+              disabled={!englishJapaneseNotes.length}
+              title="英語→日本語メモ履歴をすべて削除"
+            >
+              <Trash2 size={16} />
+            </button>
+          </div>
+
+          <div className="controls">
+            <button
+              className={`primaryButton ${isRecording && recordingTarget === "englishToJapanese" ? "active" : ""}`}
+              type="button"
+              onClick={() => startRecording("englishToJapanese")}
+              disabled={isRecording || isPreparingRecording || isBusy}
+            >
+              <Mic size={22} />
+              {isPreparingRecording && recordingTarget === "englishToJapanese" ? "マイク確認中" : "英語録音開始"}
+            </button>
+            <button
+              className="secondaryButton"
+              type="button"
+              onClick={stopRecording}
+              disabled={!isRecording || recordingTarget !== "englishToJapanese"}
+            >
+              <MicOff size={22} />
+              英語録音停止
+            </button>
+          </div>
+
+          <div className="fieldGrid twoFields englishNoteFields">
+            <label className="field">
+              <span className="label">英語文字起こし</span>
+              <textarea
+                className="textArea"
+                value={englishInputText}
+                onChange={(event) => {
+                  setEnglishInputText(event.target.value);
+                  setJapaneseNoteText("");
+                }}
+                placeholder="英語音声の文字起こし、または手入力した英語テキストをここに表示します。"
+              />
+            </label>
+
+            <label className="field">
+              <span className="label">日本語メモ</span>
+              <textarea
+                className="textArea"
+                value={japaneseNoteText}
+                onChange={(event) => setJapaneseNoteText(event.target.value)}
+                placeholder="英語テキストを日本語化したメモがここに表示されます。"
+              />
+            </label>
+          </div>
+
+          <div className="actionRow wrapActions">
+            <button
+              className="secondaryButton"
+              type="button"
+              onClick={translateEnglishInput}
+              disabled={isBusy || !englishInputText.trim()}
+            >
+              <Send size={20} />
+              日本語化する
+            </button>
+            <button
+              className="secondaryButton"
+              type="button"
+              onClick={saveCurrentEnglishJapaneseNote}
+              disabled={!englishInputText.trim() || !japaneseNoteText.trim()}
+            >
+              <FileText size={20} />
+              保存
+            </button>
+            <button
+              className="secondaryButton"
+              type="button"
+              onClick={downloadCurrentEnglishJapaneseNote}
+              disabled={!englishInputText.trim() && !japaneseNoteText.trim()}
+            >
+              <Download size={20} />
+              TXT
+            </button>
+          </div>
+
+          <EnglishJapaneseNotesList
+            notes={englishJapaneseNotes}
+            onRestore={restoreEnglishJapaneseNote}
+            onDelete={deleteEnglishJapaneseNote}
+          />
         </section>
 
         {error ? <div className="errorBox">{error}</div> : null}
@@ -831,6 +1129,47 @@ export default function Home() {
 
       </div>
     </main>
+  );
+}
+
+function EnglishJapaneseNotesList({
+  notes,
+  onRestore,
+  onDelete
+}: {
+  notes: EnglishJapaneseNote[];
+  onRestore: (item: EnglishJapaneseNote) => void;
+  onDelete: (itemId: string) => void;
+}) {
+  return (
+    <div className="englishNoteHistory">
+      <p className="historyCount">保存済みメモ {notes.length}件</p>
+      {notes.length ? (
+        <ul className="historyList compactHistoryList">
+          {notes.map((item) => (
+            <li className="historyItem" key={item.id}>
+              <button className="historyItemMain" type="button" onClick={() => onRestore(item)}>
+                <span className="historyMeta">
+                  {formatHistoryTimestamp(item.savedAt)} / {providerLabels[item.provider]}
+                </span>
+                <span className="historySource">{item.japanese}</span>
+                <span className="historyTranslation">{item.english}</span>
+              </button>
+              <div className="historyActions">
+                <button className="copyButton smallIconButton" type="button" onClick={() => onRestore(item)} title="メモを復元">
+                  <RotateCcw size={16} />
+                </button>
+                <button className="copyButton smallIconButton" type="button" onClick={() => onDelete(item.id)} title="このメモを削除">
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="placeholder">英語音声を日本語化すると、ここに保存されます。</p>
+      )}
+    </div>
   );
 }
 
@@ -1252,6 +1591,59 @@ function saveTranslationFavorites(items: TranslationHistoryItem[]) {
   return nextItems;
 }
 
+function createEnglishJapaneseNote({
+  english,
+  japanese,
+  provider
+}: Omit<EnglishJapaneseNote, "id" | "savedAt">): EnglishJapaneseNote {
+  return {
+    id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+    english,
+    japanese,
+    provider,
+    savedAt: new Date().toISOString()
+  };
+}
+
+function loadEnglishJapaneseNotes(): EnglishJapaneseNote[] {
+  try {
+    const saved = localStorage.getItem(englishJapaneseNotesStorageKey);
+    if (!saved) return [];
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(isEnglishJapaneseNote).slice(0, maxEnglishJapaneseNotes);
+  } catch {
+    return [];
+  }
+}
+
+function saveEnglishJapaneseNotes(items: EnglishJapaneseNote[]) {
+  const nextItems = items.slice(0, maxEnglishJapaneseNotes);
+  localStorage.setItem(englishJapaneseNotesStorageKey, JSON.stringify(nextItems));
+  return nextItems;
+}
+
+function upsertEnglishJapaneseNote(items: EnglishJapaneseNote[], nextItem: EnglishJapaneseNote) {
+  const withoutDuplicate = items.filter(
+    (item) =>
+      item.english.trim().toLowerCase() !== nextItem.english.trim().toLowerCase() ||
+      item.japanese.trim() !== nextItem.japanese.trim()
+  );
+  return [nextItem, ...withoutDuplicate].slice(0, maxEnglishJapaneseNotes);
+}
+
+function isEnglishJapaneseNote(value: unknown): value is EnglishJapaneseNote {
+  if (typeof value !== "object" || value === null) return false;
+  const item = value as Partial<EnglishJapaneseNote>;
+  return (
+    typeof item.id === "string" &&
+    typeof item.english === "string" &&
+    typeof item.japanese === "string" &&
+    typeof item.savedAt === "string" &&
+    isApiProvider(item.provider)
+  );
+}
+
 function upsertTranslationHistoryItem(items: TranslationHistoryItem[], nextItem: TranslationHistoryItem) {
   const withoutDuplicate = items.filter((item) => getTranslationItemKey(item) !== getTranslationItemKey(nextItem));
   return [nextItem, ...withoutDuplicate].slice(0, maxTranslationHistoryItems);
@@ -1350,6 +1742,53 @@ function getApiWarning(provider: ApiProvider, apiAvailability: ApiAvailability |
   const keyName = provider === "gemini" ? "GEMINI_API_KEY" : "OPENAI_API_KEY";
   const providerName = providerLabels[provider];
   return `${providerName} のAPIキーが未設定です。.env.local の ${keyName} を確認してください。キー設定後はアプリを再起動または再読み込みしてください。`;
+}
+
+function formatEnglishJapaneseNoteText({
+  english,
+  japanese,
+  provider,
+  savedAt
+}: {
+  english: string;
+  japanese: string;
+  provider: ApiProvider;
+  savedAt: string;
+}) {
+  return [
+    "English to Japanese note",
+    `Saved at: ${savedAt}`,
+    `Provider: ${providerLabels[provider]}`,
+    "",
+    "## English transcript",
+    english || "(empty)",
+    "",
+    "## Japanese note",
+    japanese || "(empty)",
+    ""
+  ].join("\n");
+}
+
+function downloadTextFile(filename: string, content: string) {
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+function formatDateForFilename(date: Date) {
+  const pad = (value: number) => value.toString().padStart(2, "0");
+  return [
+    date.getFullYear(),
+    pad(date.getMonth() + 1),
+    pad(date.getDate()),
+    "-",
+    pad(date.getHours()),
+    pad(date.getMinutes())
+  ].join("");
 }
 
 function getAudioStats(samples: Float32Array, sampleRate: number): AudioStats {

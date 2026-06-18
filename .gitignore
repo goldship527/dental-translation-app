@@ -1,6 +1,7 @@
 .next
 node_modules
 out
+work
 tsconfig.tsbuildinfo
 .env
 .env*.local

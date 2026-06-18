@@ -63,6 +63,8 @@ button {
 .topActions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 8px;
   flex: 0 0 auto;
 }
@@ -253,6 +255,10 @@ button {
   display: flex;
   gap: 10px;
   margin-top: 10px;
+}
+
+.wrapActions {
+  flex-wrap: wrap;
 }
 
 .actionRow > button {
@@ -577,6 +583,10 @@ button {
   list-style: none;
 }
 
+.compactHistoryList {
+  max-height: 240px;
+}
+
 .historyItem {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -586,6 +596,20 @@ button {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #ffffff;
+}
+
+.englishNotePanel {
+  display: grid;
+  gap: 12px;
+}
+
+.englishNoteFields .textArea {
+  min-height: 118px;
+}
+
+.englishNoteHistory {
+  display: grid;
+  gap: 8px;
 }
 
 .historyItemMain {
@@ -625,6 +649,266 @@ button {
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 6px;
+}
+
+.videoIntroPanel,
+.videoUploadPanel,
+.videoToolPanel {
+  display: grid;
+  gap: 12px;
+}
+
+.videoStepGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.videoStep {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--muted);
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.videoStep.active {
+  color: var(--primary-dark);
+  border-color: rgba(15, 118, 110, 0.28);
+  background: var(--primary-soft);
+}
+
+.videoStepNumber {
+  display: inline-grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 999px;
+  color: #ffffff;
+  background: var(--primary);
+  font-size: 11px;
+}
+
+.videoDropButton {
+  display: grid;
+  min-height: 156px;
+  place-items: center;
+  gap: 8px;
+  padding: 18px;
+  border: 1px dashed rgba(15, 118, 110, 0.42);
+  border-radius: 8px;
+  color: var(--primary-dark);
+  background: var(--surface-strong);
+  cursor: pointer;
+  text-align: center;
+}
+
+.videoDropTitle {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.videoDropSub {
+  max-width: 32rem;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.videoMetaGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.videoMetaItem {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.videoMetaItem dt {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.videoMetaItem dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.videoToolStatus {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid rgba(180, 83, 9, 0.26);
+  border-radius: 999px;
+  color: var(--warning);
+  background: var(--warning-bg);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.videoToolStatus.ready {
+  border-color: rgba(15, 118, 110, 0.24);
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+}
+
+.videoCommandGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.videoCommandStatus {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.videoCommandName {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.videoCommandVersion {
+  display: -webkit-box;
+  overflow: hidden;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.videoPathList {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.videoPathList div {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.videoPathList dt {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.videoPathList dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.choiceGrid {
+  display: grid;
+  gap: 10px;
+}
+
+.choiceOption {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.choiceOption.selected {
+  border-color: rgba(15, 118, 110, 0.35);
+  background: var(--primary-soft);
+}
+
+.choiceOption input {
+  margin-top: 3px;
+}
+
+.choiceOption span {
+  display: grid;
+  gap: 3px;
+}
+
+.choiceOption strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.choiceOption small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.videoPreviewCard {
+  overflow: hidden;
+}
+
+.videoPreview {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #0f172a;
+}
+
+.renderedVideoPreview {
+  margin-top: 12px;
+  border-radius: 8px;
+}
+
+.transcriptArea {
+  min-height: 240px;
+}
+
+.subtitleArea {
+  min-height: 220px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.narrationPlayer {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
 }
 
 .warningBadge {
@@ -714,6 +998,19 @@ button {
 
   .historyTools {
     grid-template-columns: 1.2fr 0.8fr 0.8fr;
+  }
+
+  .videoStepGrid,
+  .videoMetaGrid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .videoCommandGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .choiceGrid {
+    grid-template-columns: 1fr 1fr;
   }
 
   .glossaryItem {
