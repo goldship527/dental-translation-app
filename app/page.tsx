@@ -60,6 +60,14 @@ const voiceStyleLabels: Record<SpeechVoiceStyle, string> = {
   lecture: "Lecture"
 };
 
+const continuousMemoStatusLabels: Record<ContinuousMemoSegmentStatus, string> = {
+  queued: "待機中",
+  transcribing: "文字起こし中",
+  translating: "日本語化中",
+  done: "完了",
+  error: "要再実行"
+};
+
 type TranslationResult = {
   english: string;
   chinese: string;
@@ -104,7 +112,9 @@ type AudioStats = {
 
 type SpeechTarget = "english" | "chinese";
 
-type RecordingTarget = "japanese" | "englishToJapanese";
+type RecordingTarget = "japanese" | "englishToJapanese" | "englishToJapaneseContinuous";
+type ContinuousMemoSegmentSeconds = 15 | 30 | 60;
+type ContinuousMemoSegmentStatus = "queued" | "transcribing" | "translating" | "done" | "error";
 
 type EnglishJapaneseNote = {
   id: string;
@@ -112,6 +122,17 @@ type EnglishJapaneseNote = {
   japanese: string;
   provider: ApiProvider;
   savedAt: string;
+};
+
+type ContinuousMemoSegment = {
+  id: string;
+  index: number;
+  status: ContinuousMemoSegmentStatus;
+  durationSeconds: number;
+  createdAt: string;
+  english: string;
+  japanese: string;
+  error?: string;
 };
 
 const lastResultStorageKey = "dental-lecture-translator:last-result";
@@ -146,6 +167,9 @@ export default function Home() {
   const [englishInputText, setEnglishInputText] = useState("");
   const [japaneseNoteText, setJapaneseNoteText] = useState("");
   const [englishJapaneseNotes, setEnglishJapaneseNotes] = useState<EnglishJapaneseNote[]>([]);
+  const [continuousMemoSegmentSeconds, setContinuousMemoSegmentSeconds] = useState<ContinuousMemoSegmentSeconds>(30);
+  const [continuousMemoSegments, setContinuousMemoSegments] = useState<ContinuousMemoSegment[]>([]);
+  const [isContinuousMemoProcessing, setIsContinuousMemoProcessing] = useState(false);
   const [lastTranslatedJapaneseText, setLastTranslatedJapaneseText] = useState("");
   const [apiAvailability, setApiAvailability] = useState<ApiAvailability | null>(null);
   const [glossary, setGlossary] = useState<DentalGlossaryEntry[]>([]);
@@ -161,6 +185,11 @@ export default function Home() {
   const [generatingSpeech, setGeneratingSpeech] = useState<SpeechTarget | null>(null);
   const [playingSpeech, setPlayingSpeech] = useState<SpeechTarget | null>(null);
   const recorderRef = useRef<RecorderState | null>(null);
+  const continuousMemoTimerRef = useRef<number | null>(null);
+  const continuousMemoLastChunkIndexRef = useRef(0);
+  const continuousMemoSegmentIndexRef = useRef(0);
+  const continuousMemoProcessingRef = useRef<Promise<void>>(Promise.resolve());
+  const continuousMemoAudioRef = useRef<Map<string, { audioBlob: Blob; durationSeconds: number }>>(new Map());
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const speechCacheRef = useRef<Map<string, string>>(new Map());
   const activeRequestControllerRef = useRef<AbortController | null>(null);
@@ -202,6 +231,7 @@ export default function Home() {
     const speechCache = speechCacheRef.current;
     return () => {
       activeRequestControllerRef.current?.abort();
+      clearContinuousMemoTimer();
       const recorder = recorderRef.current;
       stopRecorder(recorder);
       if (recorder) {
@@ -239,6 +269,13 @@ export default function Home() {
       activeRequestControllerRef.current = null;
     }
   }, []);
+
+  function clearContinuousMemoTimer() {
+    if (continuousMemoTimerRef.current !== null) {
+      window.clearInterval(continuousMemoTimerRef.current);
+      continuousMemoTimerRef.current = null;
+    }
+  }
 
   const translateText = useCallback(
     async (text: string) => {
@@ -300,6 +337,15 @@ export default function Home() {
       setLastTranslatedJapaneseText("");
     } else {
       setJapaneseNoteText("");
+      if (target === "englishToJapaneseContinuous") {
+        setEnglishInputText("");
+        setContinuousMemoSegments([]);
+        setIsContinuousMemoProcessing(false);
+        continuousMemoAudioRef.current.clear();
+        continuousMemoLastChunkIndexRef.current = 0;
+        continuousMemoSegmentIndexRef.current = 0;
+        continuousMemoProcessingRef.current = Promise.resolve();
+      }
     }
     setIsPreparingRecording(true);
     setRecordingTarget(target);
@@ -365,6 +411,15 @@ export default function Home() {
         sampleRate: audioContext.sampleRate,
         target
       };
+      if (target === "englishToJapaneseContinuous") {
+        clearContinuousMemoTimer();
+        continuousMemoTimerRef.current = window.setInterval(() => {
+          const currentRecorder = recorderRef.current;
+          if (currentRecorder?.target === "englishToJapaneseContinuous") {
+            enqueueContinuousMemoSegment(currentRecorder);
+          }
+        }, continuousMemoSegmentSeconds * 1000);
+      }
       audioContext = null;
       stream = null;
       setIsPreparingRecording(false);
@@ -390,8 +445,19 @@ export default function Home() {
     setIsRecording(false);
     setRecordingTarget(null);
     recorderRef.current = null;
+    clearContinuousMemoTimer();
     stopRecorder(recorder);
     await recorder.audioContext.close().catch(() => undefined);
+
+    if (recorder.target === "englishToJapaneseContinuous") {
+      const queuedSegment = enqueueContinuousMemoSegment(recorder);
+      if (!queuedSegment && !continuousMemoSegments.length) {
+        setError("連続メモに処理できる英語音声がありませんでした。少し話してから停止してください。");
+      }
+      await continuousMemoProcessingRef.current;
+      setIsBusy(false);
+      return;
+    }
 
     const samples = mergeAudioChunks(recorder.chunks);
     const stats = getAudioStats(samples, recorder.sampleRate);
@@ -457,6 +523,49 @@ export default function Home() {
     }
   };
 
+  const transcribeEnglishAudio = useCallback(
+    async (audioBlob: Blob, durationSeconds: number, signal?: AbortSignal) => {
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "english-speech.wav");
+      formData.append("provider", provider);
+      formData.append("sourceLanguage", "en");
+      formData.append("durationSeconds", durationSeconds.toFixed(2));
+
+      const response = await fetch("/api/transcribe", {
+        method: "POST",
+        signal,
+        body: formData
+      });
+      const data = (await response.json()) as { text?: string; error?: string };
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "英語文字起こしに失敗しました。");
+      }
+
+      return data.text?.trim() ?? "";
+    },
+    [provider]
+  );
+
+  const translateEnglishTextToJapanese = useCallback(
+    async (text: string, signal?: AbortSignal) => {
+      const response = await fetch("/api/translate-to-japanese", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal,
+        body: JSON.stringify({
+          text,
+          provider
+        })
+      });
+
+      const data = (await response.json()) as { japanese?: string; error?: string };
+      if (!response.ok) throw new Error(data.error ?? "英語から日本語への翻訳に失敗しました。");
+      return data.japanese ?? "";
+    },
+    [provider]
+  );
+
   const transcribeEnglishToJapaneseRecording = async (audioBlob: Blob, durationSeconds: number) => {
     if (!audioBlob.size) {
       setIsBusy(false);
@@ -466,24 +575,7 @@ export default function Home() {
 
     const controller = startRequest();
     try {
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "english-speech.wav");
-      formData.append("provider", provider);
-      formData.append("sourceLanguage", "en");
-      formData.append("durationSeconds", durationSeconds.toFixed(2));
-
-      const transcriptionResponse = await fetch("/api/transcribe", {
-        method: "POST",
-        signal: controller.signal,
-        body: formData
-      });
-      const transcriptionData = (await transcriptionResponse.json()) as { text?: string; error?: string };
-
-      if (!transcriptionResponse.ok) {
-        throw new Error(transcriptionData.error ?? "英語文字起こしに失敗しました。");
-      }
-
-      const english = transcriptionData.text?.trim() ?? "";
+      const english = await transcribeEnglishAudio(audioBlob, durationSeconds, controller.signal);
       if (!isActiveRequest(controller)) return;
       if (!english) {
         setIsBusy(false);
@@ -515,21 +607,8 @@ export default function Home() {
       }
 
       try {
-        const response = await fetch("/api/translate-to-japanese", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          signal: controller.signal,
-          body: JSON.stringify({
-            text,
-            provider
-          })
-        });
-
-        const data = (await response.json()) as { japanese?: string; error?: string };
-        if (!response.ok) throw new Error(data.error ?? "英語から日本語への翻訳に失敗しました。");
-
+        const japanese = await translateEnglishTextToJapanese(text, controller.signal);
         if (!isActiveRequest(controller)) return;
-        const japanese = data.japanese ?? "";
         setJapaneseNoteText(japanese);
         const note = createEnglishJapaneseNote({
           english: text,
@@ -551,8 +630,110 @@ export default function Home() {
         }
       }
     },
-    [finishRequest, isActiveRequest, provider, startRequest]
+    [finishRequest, isActiveRequest, provider, startRequest, translateEnglishTextToJapanese]
   );
+
+  function enqueueContinuousMemoSegment(recorder: RecorderState) {
+    const startIndex = continuousMemoLastChunkIndexRef.current;
+    const endIndex = recorder.chunks.length;
+    if (endIndex <= startIndex) return false;
+
+    continuousMemoLastChunkIndexRef.current = endIndex;
+    const samples = mergeAudioChunks(recorder.chunks.slice(startIndex, endIndex));
+    const stats = getAudioStats(samples, recorder.sampleRate);
+    if (isSilentRecording(stats)) return false;
+
+    const id = createLocalId();
+    const index = continuousMemoSegmentIndexRef.current + 1;
+    continuousMemoSegmentIndexRef.current = index;
+    const audioBlob = encodeWav(samples, recorder.sampleRate);
+    continuousMemoAudioRef.current.set(id, { audioBlob, durationSeconds: stats.durationSeconds });
+
+    const segment: ContinuousMemoSegment = {
+      id,
+      index,
+      status: "queued",
+      durationSeconds: stats.durationSeconds,
+      createdAt: new Date().toISOString(),
+      english: "",
+      japanese: ""
+    };
+    setContinuousMemoSegments((current) => [...current, segment]);
+
+    continuousMemoProcessingRef.current = continuousMemoProcessingRef.current
+      .catch(() => undefined)
+      .then(() => processContinuousMemoSegment(id, audioBlob, stats.durationSeconds));
+    return true;
+  }
+
+  async function processContinuousMemoSegment(id: string, audioBlob: Blob, durationSeconds: number) {
+    setIsContinuousMemoProcessing(true);
+    try {
+      updateContinuousMemoSegment(id, { status: "transcribing", error: undefined });
+      const english = await transcribeEnglishAudio(audioBlob, durationSeconds);
+      if (!english) {
+        throw new Error("英語音声が検出されませんでした。");
+      }
+
+      updateContinuousMemoSegment(id, { status: "translating", english });
+      const japanese = await translateEnglishTextToJapanese(english);
+      updateContinuousMemoSegment(id, { status: "done", english, japanese });
+      setEnglishInputText(english);
+      setJapaneseNoteText(japanese);
+
+      const note = createEnglishJapaneseNote({ english, japanese, provider });
+      setEnglishJapaneseNotes((current) => saveEnglishJapaneseNotes(upsertEnglishJapaneseNote(current, note)));
+    } catch (reason) {
+      updateContinuousMemoSegment(id, {
+        status: "error",
+        error: reason instanceof Error ? reason.message : "連続メモの処理でエラーが発生しました。"
+      });
+    } finally {
+      setIsContinuousMemoProcessing(false);
+    }
+  }
+
+  function updateContinuousMemoSegment(id: string, updates: Partial<ContinuousMemoSegment>) {
+    setContinuousMemoSegments((current) =>
+      current.map((segment) => (segment.id === id ? { ...segment, ...updates } : segment))
+    );
+  }
+
+  function retryContinuousMemoSegment(id: string) {
+    const audio = continuousMemoAudioRef.current.get(id);
+    if (!audio) {
+      updateContinuousMemoSegment(id, {
+        status: "error",
+        error: "再実行用の音声データが見つかりません。録音をやり直してください。"
+      });
+      return;
+    }
+
+    updateContinuousMemoSegment(id, {
+      status: "queued",
+      english: "",
+      japanese: "",
+      error: undefined
+    });
+    continuousMemoProcessingRef.current = continuousMemoProcessingRef.current
+      .catch(() => undefined)
+      .then(() => processContinuousMemoSegment(id, audio.audioBlob, audio.durationSeconds));
+  }
+
+  function downloadContinuousEnglishJapaneseNotes() {
+    const completedSegments = continuousMemoSegments.filter((segment) => segment.english || segment.japanese);
+    if (!completedSegments.length) return;
+
+    downloadTextFile(
+      `english-japanese-continuous-notes-${formatDateForFilename(new Date())}.txt`,
+      formatContinuousEnglishJapaneseNotesText({
+        segments: completedSegments,
+        provider,
+        segmentSeconds: continuousMemoSegmentSeconds,
+        savedAt: new Date().toISOString()
+      })
+    );
+  }
 
   const translateScript = async () => {
     if (!japaneseText.trim()) {
@@ -975,6 +1156,82 @@ export default function Home() {
             </button>
           </div>
 
+          <div className="continuousMemoBox">
+            <div className="continuousMemoHeader">
+              <div>
+                <span className="label">連続メモ</span>
+                <p className="sectionSub">短い区切りごとに英語文字起こしと日本語メモを順番に追加します。</p>
+              </div>
+              <label className="compactSelectField">
+                <span>区切り</span>
+                <select
+                  value={continuousMemoSegmentSeconds}
+                  onChange={(event) =>
+                    setContinuousMemoSegmentSeconds(Number(event.target.value) as ContinuousMemoSegmentSeconds)
+                  }
+                  disabled={isRecording || isPreparingRecording}
+                >
+                  <option value={15}>15秒</option>
+                  <option value={30}>30秒</option>
+                  <option value={60}>60秒</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="actionRow wrapActions">
+              <button
+                className={`primaryButton ${isRecording && recordingTarget === "englishToJapaneseContinuous" ? "active" : ""}`}
+                type="button"
+                onClick={() => startRecording("englishToJapaneseContinuous")}
+                disabled={isRecording || isPreparingRecording || isBusy}
+              >
+                <Mic size={20} />
+                {isPreparingRecording && recordingTarget === "englishToJapaneseContinuous"
+                  ? "マイク確認中"
+                  : "連続メモ開始"}
+              </button>
+              <button
+                className="secondaryButton"
+                type="button"
+                onClick={stopRecording}
+                disabled={!isRecording || recordingTarget !== "englishToJapaneseContinuous"}
+              >
+                <Square size={20} />
+                連続メモ停止
+              </button>
+              <button
+                className="secondaryButton"
+                type="button"
+                onClick={downloadContinuousEnglishJapaneseNotes}
+                disabled={!continuousMemoSegments.some((segment) => segment.english || segment.japanese)}
+              >
+                <Download size={20} />
+                まとめTXT
+              </button>
+            </div>
+
+            {isRecording && recordingTarget === "englishToJapaneseContinuous" ? (
+              <p className="loadingLine" aria-live="polite">
+                <span className="spinner" />
+                {continuousMemoSegmentSeconds}秒ごとに区切っています。停止時に残りも処理します。
+              </p>
+            ) : isContinuousMemoProcessing ? (
+              <p className="loadingLine" aria-live="polite">
+                <span className="spinner" />
+                連続メモを処理中です
+              </p>
+            ) : null}
+
+            <ContinuousMemoSegmentsList
+              segments={continuousMemoSegments}
+              onRestore={(segment) => {
+                setEnglishInputText(segment.english);
+                setJapaneseNoteText(segment.japanese);
+              }}
+              onRetry={retryContinuousMemoSegment}
+            />
+          </div>
+
           <div className="fieldGrid twoFields englishNoteFields">
             <label className="field">
               <span className="label">英語文字起こし</span>
@@ -1169,6 +1426,55 @@ function EnglishJapaneseNotesList({
       ) : (
         <p className="placeholder">英語音声を日本語化すると、ここに保存されます。</p>
       )}
+    </div>
+  );
+}
+
+function ContinuousMemoSegmentsList({
+  segments,
+  onRestore,
+  onRetry
+}: {
+  segments: ContinuousMemoSegment[];
+  onRestore: (segment: ContinuousMemoSegment) => void;
+  onRetry: (segmentId: string) => void;
+}) {
+  if (!segments.length) {
+    return <p className="placeholder">連続メモを開始すると、区切りごとの結果がここに表示されます。</p>;
+  }
+
+  return (
+    <div className="continuousMemoList">
+      {segments.map((segment) => (
+        <div className={`continuousMemoItem ${segment.status}`} key={segment.id}>
+          <button
+            className="historyItemMain"
+            type="button"
+            onClick={() => onRestore(segment)}
+            disabled={!segment.english && !segment.japanese}
+          >
+            <span className="historyMeta">
+              #{segment.index} / {formatDuration(segment.durationSeconds)} / {continuousMemoStatusLabels[segment.status]}
+            </span>
+            <span className="historySource">
+              {segment.japanese || segment.english || segment.error || "処理待ちです"}
+            </span>
+            {segment.english ? <span className="historyTranslation">{segment.english}</span> : null}
+          </button>
+          <div className="historyActions">
+            {segment.status === "error" ? (
+              <button
+                className="copyButton smallIconButton"
+                type="button"
+                onClick={() => onRetry(segment.id)}
+                title="この区切りを再実行"
+              >
+                <RotateCcw size={15} />
+              </button>
+            ) : null}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -1597,12 +1903,16 @@ function createEnglishJapaneseNote({
   provider
 }: Omit<EnglishJapaneseNote, "id" | "savedAt">): EnglishJapaneseNote {
   return {
-    id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+    id: createLocalId(),
     english,
     japanese,
     provider,
     savedAt: new Date().toISOString()
   };
+}
+
+function createLocalId() {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 function loadEnglishJapaneseNotes(): EnglishJapaneseNote[] {
@@ -1767,6 +2077,56 @@ function formatEnglishJapaneseNoteText({
     japanese || "(empty)",
     ""
   ].join("\n");
+}
+
+function formatContinuousEnglishJapaneseNotesText({
+  segments,
+  provider,
+  segmentSeconds,
+  savedAt
+}: {
+  segments: ContinuousMemoSegment[];
+  provider: ApiProvider;
+  segmentSeconds: ContinuousMemoSegmentSeconds;
+  savedAt: string;
+}) {
+  const lines = [
+    "English to Japanese continuous notes",
+    `Saved at: ${savedAt}`,
+    `Provider: ${providerLabels[provider]}`,
+    `Segment seconds: ${segmentSeconds}`,
+    "",
+    "## Notes"
+  ];
+
+  segments.forEach((segment) => {
+    lines.push(
+      "",
+      `### Segment ${segment.index}`,
+      `Status: ${continuousMemoStatusLabels[segment.status]}`,
+      `Duration: ${formatDuration(segment.durationSeconds)}`,
+      "",
+      "English:",
+      segment.english || "(empty)",
+      "",
+      "Japanese:",
+      segment.japanese || "(empty)"
+    );
+    if (segment.error) {
+      lines.push("", `Error: ${segment.error}`);
+    }
+  });
+
+  lines.push("");
+  return lines.join("\n");
+}
+
+function formatDuration(seconds: number) {
+  if (!Number.isFinite(seconds) || seconds <= 0) return "0秒";
+  if (seconds < 60) return `${Math.round(seconds)}秒`;
+  const minutes = Math.floor(seconds / 60);
+  const restSeconds = Math.round(seconds % 60);
+  return `${minutes}分${restSeconds.toString().padStart(2, "0")}秒`;
 }
 
 function downloadTextFile(filename: string, content: string) {
