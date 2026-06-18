@@ -277,6 +277,30 @@ export default function Home() {
     }
   }
 
+  function startContinuousMemoTimer() {
+    clearContinuousMemoTimer();
+    continuousMemoTimerRef.current = window.setInterval(() => {
+      const currentRecorder = recorderRef.current;
+      if (currentRecorder?.target === "englishToJapaneseContinuous") {
+        enqueueContinuousMemoSegment(currentRecorder);
+      }
+    }, continuousMemoSegmentSeconds * 1000);
+  }
+
+  function flushContinuousMemoSegment() {
+    const recorder = recorderRef.current;
+    if (recorder?.target !== "englishToJapaneseContinuous") return;
+
+    const queuedSegment = enqueueContinuousMemoSegment(recorder);
+    if (!queuedSegment) {
+      setError("区切れる英語音声がまだありません。少し話してから区切ってください。");
+      return;
+    }
+
+    setError("");
+    startContinuousMemoTimer();
+  }
+
   const translateText = useCallback(
     async (text: string) => {
       const controller = startRequest();
@@ -412,13 +436,7 @@ export default function Home() {
         target
       };
       if (target === "englishToJapaneseContinuous") {
-        clearContinuousMemoTimer();
-        continuousMemoTimerRef.current = window.setInterval(() => {
-          const currentRecorder = recorderRef.current;
-          if (currentRecorder?.target === "englishToJapaneseContinuous") {
-            enqueueContinuousMemoSegment(currentRecorder);
-          }
-        }, continuousMemoSegmentSeconds * 1000);
+        startContinuousMemoTimer();
       }
       audioContext = null;
       stream = null;
@@ -1198,6 +1216,15 @@ export default function Home() {
               >
                 <Square size={20} />
                 連続メモ停止
+              </button>
+              <button
+                className="secondaryButton"
+                type="button"
+                onClick={flushContinuousMemoSegment}
+                disabled={!isRecording || recordingTarget !== "englishToJapaneseContinuous"}
+              >
+                <FileText size={20} />
+                ここで区切る
               </button>
               <button
                 className="secondaryButton"
