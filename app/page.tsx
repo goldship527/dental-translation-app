@@ -68,6 +68,13 @@ const continuousMemoStatusLabels: Record<ContinuousMemoSegmentStatus, string> = 
   error: "要再実行"
 };
 
+const liveTranscriptionStatusLabels: Record<LiveTranscriptionSegmentStatus, string> = {
+  queued: "待機中",
+  transcribing: "文字起こし中",
+  done: "取得済み",
+  error: "エラー"
+};
+
 type TranslationResult = {
   english: string;
   chinese: string;
@@ -110,11 +117,17 @@ type AudioStats = {
   speechRatio: number;
 };
 
+type MicrophoneDevice = {
+  deviceId: string;
+  label: string;
+};
+
 type SpeechTarget = "english" | "chinese";
 
 type RecordingTarget = "japanese" | "englishToJapanese" | "englishToJapaneseContinuous";
 type ContinuousMemoSegmentSeconds = 15 | 30 | 60;
 type ContinuousMemoSegmentStatus = "queued" | "transcribing" | "translating" | "done" | "error";
+type LiveTranscriptionSegmentStatus = "queued" | "transcribing" | "done" | "error";
 
 type EnglishJapaneseNote = {
   id: string;
@@ -135,6 +148,16 @@ type ContinuousMemoSegment = {
   error?: string;
 };
 
+type LiveTranscriptionSegment = {
+  id: string;
+  index: number;
+  status: LiveTranscriptionSegmentStatus;
+  durationSeconds: number;
+  createdAt: string;
+  text: string;
+  error?: string;
+};
+
 const lastResultStorageKey = "dental-lecture-translator:last-result";
 const translationHistoryStorageKey = "dental-lecture-translator:history";
 const translationFavoritesStorageKey = "dental-lecture-translator:favorites";
@@ -142,6 +165,8 @@ const englishJapaneseNotesStorageKey = "dental-lecture-translator:english-japane
 const maxTranslationHistoryItems = 20;
 const maxTranslationFavoriteItems = 50;
 const maxEnglishJapaneseNotes = 50;
+const defaultMicrophoneDeviceId = "default";
+const liveTranscriptionSegmentSeconds = 5;
 
 const silenceThresholds = {
   minDuration: getPublicNumberEnv("NEXT_PUBLIC_SILENCE_MIN_DURATION", 0.6),
@@ -170,6 +195,8 @@ export default function Home() {
   const [continuousMemoSegmentSeconds, setContinuousMemoSegmentSeconds] = useState<ContinuousMemoSegmentSeconds>(30);
   const [continuousMemoSegments, setContinuousMemoSegments] = useState<ContinuousMemoSegment[]>([]);
   const [isContinuousMemoProcessing, setIsContinuousMemoProcessing] = useState(false);
+  const [liveTranscriptionSegments, setLiveTranscriptionSegments] = useState<LiveTranscriptionSegment[]>([]);
+  const [isLiveTranscriptionProcessing, setIsLiveTranscriptionProcessing] = useState(false);
   const [lastTranslatedJapaneseText, setLastTranslatedJapaneseText] = useState("");
   const [apiAvailability, setApiAvailability] = useState<ApiAvailability | null>(null);
   const [glossary, setGlossary] = useState<DentalGlossaryEntry[]>([]);
@@ -184,7 +211,16 @@ export default function Home() {
   const [favoriteModeFilter, setFavoriteModeFilter] = useState<HistoryModeFilter>("all");
   const [generatingSpeech, setGeneratingSpeech] = useState<SpeechTarget | null>(null);
   const [playingSpeech, setPlayingSpeech] = useState<SpeechTarget | null>(null);
+  const [microphoneDevices, setMicrophoneDevices] = useState<MicrophoneDevice[]>([]);
+  const [selectedMicrophoneId, setSelectedMicrophoneId] = useState(defaultMicrophoneDeviceId);
+  const [recordingLevel, setRecordingLevel] = useState<AudioStats | null>(null);
   const recorderRef = useRef<RecorderState | null>(null);
+  const lastRecordingLevelUpdateAtRef = useRef(0);
+  const liveTranscriptionTimerRef = useRef<number | null>(null);
+  const liveTranscriptionLastChunkIndexRef = useRef(0);
+  const liveTranscriptionSegmentIndexRef = useRef(0);
+  const liveTranscriptionProcessingRef = useRef<Promise<void>>(Promise.resolve());
+  const liveTranscriptionSegmentsRef = useRef<LiveTranscriptionSegment[]>([]);
   const continuousMemoTimerRef = useRef<number | null>(null);
   const continuousMemoLastChunkIndexRef = useRef(0);
   const continuousMemoSegmentIndexRef = useRef(0);
@@ -194,12 +230,48 @@ export default function Home() {
   const speechCacheRef = useRef<Map<string, string>>(new Map());
   const activeRequestControllerRef = useRef<AbortController | null>(null);
 
+  const refreshMicrophoneDevices = useCallback(async (showError = false) => {
+    if (!navigator.mediaDevices?.enumerateDevices) {
+      if (showError) {
+        setError("このブラウザではマイク一覧を取得できません。ブラウザまたはOSの入力設定を確認してください。");
+      }
+      return;
+    }
+
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const microphones = devices
+        .filter((device) => device.kind === "audioinput")
+        .map((device, index) => ({
+          deviceId: device.deviceId,
+          label: device.label || `マイク ${index + 1}`
+        }));
+
+      setMicrophoneDevices(microphones);
+      setSelectedMicrophoneId((current) => {
+        if (current === defaultMicrophoneDeviceId) return current;
+        return microphones.some((device) => device.deviceId === current)
+          ? current
+          : defaultMicrophoneDeviceId;
+      });
+
+      if (showError && microphones.length === 0) {
+        setError("利用できるマイクが見つかりません。DJI Mic Miniの接続とOSの入力設定を確認してください。");
+      }
+    } catch {
+      if (showError) {
+        setError("マイク一覧の取得に失敗しました。ブラウザのマイク権限を確認してください。");
+      }
+    }
+  }, []);
+
   useEffect(() => {
     registerServiceWorker();
     setCustomGlossary(loadCustomGlossary());
     setTranslationHistory(loadTranslationHistory());
     setTranslationFavorites(loadTranslationFavorites());
     setEnglishJapaneseNotes(loadEnglishJapaneseNotes());
+    void refreshMicrophoneDevices();
 
     fetch("/api/health")
       .then((response) => {
@@ -225,13 +297,27 @@ export default function Home() {
       .catch((reason: unknown) => {
         setError(reason instanceof Error ? reason.message : "用語辞書の読み込みに失敗しました。");
       });
-  }, []);
+  }, [refreshMicrophoneDevices]);
+
+  useEffect(() => {
+    if (!navigator.mediaDevices?.addEventListener) return;
+
+    const handleDeviceChange = () => {
+      void refreshMicrophoneDevices();
+    };
+
+    navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange);
+    return () => {
+      navigator.mediaDevices.removeEventListener("devicechange", handleDeviceChange);
+    };
+  }, [refreshMicrophoneDevices]);
 
   useEffect(() => {
     const speechCache = speechCacheRef.current;
     return () => {
       activeRequestControllerRef.current?.abort();
       clearContinuousMemoTimer();
+      clearLiveTranscriptionTimer();
       const recorder = recorderRef.current;
       stopRecorder(recorder);
       if (recorder) {
@@ -275,6 +361,23 @@ export default function Home() {
       window.clearInterval(continuousMemoTimerRef.current);
       continuousMemoTimerRef.current = null;
     }
+  }
+
+  function clearLiveTranscriptionTimer() {
+    if (liveTranscriptionTimerRef.current !== null) {
+      window.clearInterval(liveTranscriptionTimerRef.current);
+      liveTranscriptionTimerRef.current = null;
+    }
+  }
+
+  function startLiveTranscriptionTimer() {
+    clearLiveTranscriptionTimer();
+    liveTranscriptionTimerRef.current = window.setInterval(() => {
+      const currentRecorder = recorderRef.current;
+      if (currentRecorder?.target === "japanese") {
+        enqueueLiveTranscriptionSegment(currentRecorder);
+      }
+    }, liveTranscriptionSegmentSeconds * 1000);
   }
 
   function startContinuousMemoTimer() {
@@ -359,6 +462,12 @@ export default function Home() {
       setEnglishText("");
       setChineseText("");
       setLastTranslatedJapaneseText("");
+      setLiveTranscriptionSegments([]);
+      setIsLiveTranscriptionProcessing(false);
+      liveTranscriptionSegmentsRef.current = [];
+      liveTranscriptionLastChunkIndexRef.current = 0;
+      liveTranscriptionSegmentIndexRef.current = 0;
+      liveTranscriptionProcessingRef.current = Promise.resolve();
     } else {
       setJapaneseNoteText("");
       if (target === "englishToJapaneseContinuous") {
@@ -373,6 +482,8 @@ export default function Home() {
     }
     setIsPreparingRecording(true);
     setRecordingTarget(target);
+    setRecordingLevel(null);
+    lastRecordingLevelUpdateAtRef.current = 0;
     stopSpeech();
 
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -405,13 +516,17 @@ export default function Home() {
         throw new Error("RecorderWorkletLoadFailed");
       }
 
-      stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          channelCount: 1,
-          echoCancellation: true,
-          noiseSuppression: true
-        }
-      });
+      const audioConstraints: MediaTrackConstraints = {
+        channelCount: 1,
+        echoCancellation: true,
+        noiseSuppression: true
+      };
+      if (selectedMicrophoneId !== defaultMicrophoneDeviceId) {
+        audioConstraints.deviceId = { exact: selectedMicrophoneId };
+      }
+
+      stream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
+      void refreshMicrophoneDevices();
       await resumeAudioContext(audioContext);
       const source = audioContext.createMediaStreamSource(stream);
       const workletNode = new AudioWorkletNode(audioContext, "recorder-processor", {
@@ -419,9 +534,16 @@ export default function Home() {
         numberOfOutputs: 0
       });
       const chunks: Float32Array[] = [];
+      const sampleRate = audioContext.sampleRate;
 
       workletNode.port.onmessage = (event: MessageEvent<Float32Array>) => {
-        chunks.push(new Float32Array(event.data));
+        const chunk = new Float32Array(event.data);
+        chunks.push(chunk);
+        const now = performance.now();
+        if (now - lastRecordingLevelUpdateAtRef.current >= 180) {
+          lastRecordingLevelUpdateAtRef.current = now;
+          setRecordingLevel(getAudioStats(chunk, sampleRate));
+        }
       };
 
       source.connect(workletNode);
@@ -437,6 +559,8 @@ export default function Home() {
       };
       if (target === "englishToJapaneseContinuous") {
         startContinuousMemoTimer();
+      } else if (target === "japanese") {
+        startLiveTranscriptionTimer();
       }
       audioContext = null;
       stream = null;
@@ -447,6 +571,7 @@ export default function Home() {
       await audioContext?.close().catch(() => undefined);
       setIsPreparingRecording(false);
       setRecordingTarget(null);
+      setRecordingLevel(null);
       setError(
         reason instanceof Error
           ? getRecordingStartErrorMessage(reason)
@@ -462,8 +587,10 @@ export default function Home() {
     setIsBusy(true);
     setIsRecording(false);
     setRecordingTarget(null);
+    setRecordingLevel(null);
     recorderRef.current = null;
     clearContinuousMemoTimer();
+    clearLiveTranscriptionTimer();
     stopRecorder(recorder);
     await recorder.audioContext.close().catch(() => undefined);
 
@@ -475,6 +602,22 @@ export default function Home() {
       await continuousMemoProcessingRef.current;
       setIsBusy(false);
       return;
+    }
+
+    if (recorder.target === "japanese") {
+      enqueueLiveTranscriptionSegment(recorder);
+      await liveTranscriptionProcessingRef.current;
+      const previewText = liveTranscriptionSegmentsRef.current
+        .filter((segment) => segment.text.trim())
+        .map((segment) => segment.text.trim())
+        .join("\n")
+        .trim();
+
+      if (previewText) {
+        setJapaneseText(previewText);
+        await translateText(previewText);
+        return;
+      }
     }
 
     const samples = mergeAudioChunks(recorder.chunks);
@@ -558,6 +701,29 @@ export default function Home() {
 
       if (!response.ok) {
         throw new Error(data.error ?? "英語文字起こしに失敗しました。");
+      }
+
+      return data.text?.trim() ?? "";
+    },
+    [provider]
+  );
+
+  const transcribeJapanesePreviewAudio = useCallback(
+    async (audioBlob: Blob, durationSeconds: number) => {
+      const formData = new FormData();
+      formData.append("audio", audioBlob, "japanese-live-segment.wav");
+      formData.append("provider", provider);
+      formData.append("sourceLanguage", "ja");
+      formData.append("durationSeconds", durationSeconds.toFixed(2));
+
+      const response = await fetch("/api/transcribe", {
+        method: "POST",
+        body: formData
+      });
+      const data = (await response.json()) as { text?: string; error?: string };
+
+      if (!response.ok) {
+        throw new Error(data.error ?? "録音中プレビューの文字起こしに失敗しました。");
       }
 
       return data.text?.trim() ?? "";
@@ -650,6 +816,69 @@ export default function Home() {
     },
     [finishRequest, isActiveRequest, provider, startRequest, translateEnglishTextToJapanese]
   );
+
+  function enqueueLiveTranscriptionSegment(recorder: RecorderState) {
+    const startIndex = liveTranscriptionLastChunkIndexRef.current;
+    const endIndex = recorder.chunks.length;
+    if (endIndex <= startIndex) return false;
+
+    liveTranscriptionLastChunkIndexRef.current = endIndex;
+    const samples = mergeAudioChunks(recorder.chunks.slice(startIndex, endIndex));
+    const stats = getAudioStats(samples, recorder.sampleRate);
+    if (isSilentRecording(stats)) return false;
+
+    const id = createLocalId();
+    const index = liveTranscriptionSegmentIndexRef.current + 1;
+    liveTranscriptionSegmentIndexRef.current = index;
+    const audioBlob = encodeWav(samples, recorder.sampleRate);
+    const segment: LiveTranscriptionSegment = {
+      id,
+      index,
+      status: "queued",
+      durationSeconds: stats.durationSeconds,
+      createdAt: new Date().toISOString(),
+      text: ""
+    };
+
+    setLiveTranscriptionSegments((current) => {
+      const next = [...current, segment];
+      liveTranscriptionSegmentsRef.current = next;
+      return next;
+    });
+
+    liveTranscriptionProcessingRef.current = liveTranscriptionProcessingRef.current
+      .catch(() => undefined)
+      .then(() => processLiveTranscriptionSegment(id, audioBlob, stats.durationSeconds));
+    return true;
+  }
+
+  async function processLiveTranscriptionSegment(id: string, audioBlob: Blob, durationSeconds: number) {
+    setIsLiveTranscriptionProcessing(true);
+    try {
+      updateLiveTranscriptionSegment(id, { status: "transcribing", error: undefined });
+      const text = await transcribeJapanesePreviewAudio(audioBlob, durationSeconds);
+      if (!text) {
+        throw new Error("この区切りでは文字起こしできる音声が検出されませんでした。");
+      }
+
+      updateLiveTranscriptionSegment(id, { status: "done", text });
+    } catch (reason) {
+      updateLiveTranscriptionSegment(id, {
+        status: "error",
+        error: reason instanceof Error ? reason.message : "録音中プレビューの処理でエラーが発生しました。"
+      });
+    } finally {
+      setIsLiveTranscriptionProcessing(false);
+    }
+  }
+
+  function updateLiveTranscriptionSegment(id: string, updates: Partial<LiveTranscriptionSegment>) {
+    setLiveTranscriptionSegments((current) => {
+      const next = current.map((segment) => (segment.id === id ? { ...segment, ...updates } : segment));
+      liveTranscriptionSegmentsRef.current = next;
+      return next;
+    });
+  }
 
   function enqueueContinuousMemoSegment(recorder: RecorderState) {
     const startIndex = continuousMemoLastChunkIndexRef.current;
@@ -994,7 +1223,9 @@ export default function Home() {
             {isRecording
               ? recordingTarget === "englishToJapanese"
                 ? "英語録音中"
-                : "録音中"
+                : recordingTarget === "englishToJapaneseContinuous"
+                  ? "連続メモ録音中"
+                  : "録音中"
               : isPreparingRecording
                 ? "マイク確認中"
                 : "準備完了"}
@@ -1082,6 +1313,38 @@ export default function Home() {
               </select>
             </label>
           </div>
+
+          <div className="microphonePanel">
+            <div className="fieldGrid microphoneGrid">
+              <label className="field">
+                <span className="label">入力マイク</span>
+                <select
+                  className="select"
+                  value={selectedMicrophoneId}
+                  onChange={(event) => setSelectedMicrophoneId(event.target.value)}
+                  disabled={isRecording || isPreparingRecording}
+                >
+                  <option value={defaultMicrophoneDeviceId}>システム既定のマイク</option>
+                  {microphoneDevices.map((device) => (
+                    <option key={device.deviceId} value={device.deviceId}>
+                      {device.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <button
+                className="secondaryButton microphoneRefreshButton"
+                type="button"
+                onClick={() => refreshMicrophoneDevices(true)}
+                disabled={isRecording || isPreparingRecording}
+                title="マイク一覧を再読み込み"
+              >
+                <RotateCcw size={18} />
+                再読み込み
+              </button>
+            </div>
+            <InputLevelMeter stats={recordingLevel} isRecording={isRecording} />
+          </div>
         </section>
 
         <section className="card panel">
@@ -1105,6 +1368,11 @@ export default function Home() {
               録音停止
             </button>
           </div>
+          <LiveTranscriptionPreview
+            segments={liveTranscriptionSegments}
+            isRecording={isRecording && recordingTarget === "japanese"}
+            isProcessing={isLiveTranscriptionProcessing}
+          />
           <label className="field" style={{ marginTop: 12 }}>
             <span className="label">日本語原稿入力</span>
             <textarea
@@ -1733,6 +2001,51 @@ function FavoritePanel({
   );
 }
 
+function LiveTranscriptionPreview({
+  segments,
+  isRecording,
+  isProcessing
+}: {
+  segments: LiveTranscriptionSegment[];
+  isRecording: boolean;
+  isProcessing: boolean;
+}) {
+  const previewText = segments
+    .filter((segment) => segment.text.trim())
+    .map((segment) => segment.text.trim())
+    .join("\n");
+  const latestSegment = segments.at(-1);
+
+  return (
+    <div className="liveTranscriptBox">
+      <div className="liveTranscriptHeader">
+        <div>
+          <span className="label">録音中プレビュー</span>
+          <p className="sectionSub">5秒ごとに文字起こしを追加します。</p>
+        </div>
+        <span className={isRecording || isProcessing ? "inputLevelStatus active" : "inputLevelStatus"}>
+          {isRecording ? "録音中" : isProcessing ? "処理中" : "待機中"}
+        </span>
+      </div>
+      <textarea
+        className="textArea liveTranscriptArea"
+        readOnly
+        value={previewText}
+        placeholder="録音中に、取れた区切りからここへ表示されます。"
+      />
+      {latestSegment ? (
+        <p className="inputLevelMeta">
+          #{latestSegment.index} / {formatDuration(latestSegment.durationSeconds)} /{" "}
+          {liveTranscriptionStatusLabels[latestSegment.status]}
+          {latestSegment.error ? `: ${latestSegment.error}` : ""}
+        </p>
+      ) : (
+        <p className="inputLevelMeta">話し始めてから最初の文字起こしまで数秒かかります。</p>
+      )}
+    </div>
+  );
+}
+
 function ResultCard({
   title,
   icon,
@@ -1805,6 +2118,36 @@ function ResultCard({
   );
 }
 
+function InputLevelMeter({ stats, isRecording }: { stats: AudioStats | null; isRecording: boolean }) {
+  const levelPercent = getAudioLevelPercent(stats);
+  const hasInput = Boolean(
+    stats &&
+      (stats.peak >= silenceThresholds.peak ||
+        (stats.rms >= silenceThresholds.rms && stats.speechRatio >= silenceThresholds.speechRatio))
+  );
+
+  return (
+    <div className="inputLevelBox" aria-live="polite">
+      <div className="inputLevelHeader">
+        <span className="label">入力レベル</span>
+        <span className={hasInput ? "inputLevelStatus active" : "inputLevelStatus"}>
+          {isRecording ? (hasInput ? "音声あり" : "小さめ") : "録音中に表示"}
+        </span>
+      </div>
+      <div className="inputLevelTrack" aria-hidden="true">
+        <span className="inputLevelBar" style={{ width: `${levelPercent}%` }} />
+      </div>
+      {stats ? (
+        <p className="inputLevelMeta">
+          peak {stats.peak.toFixed(3)} / rms {stats.rms.toFixed(3)}
+        </p>
+      ) : (
+        <p className="inputLevelMeta">DJI Mic Miniを選び、録音開始後に声を出すとバーが動きます。</p>
+      )}
+    </div>
+  );
+}
+
 function getMicrophoneErrorMessage(error: Error) {
   if (error.name === "NotAllowedError" || error.name === "SecurityError") {
     return "マイクの使用が許可されていません。ブラウザのアドレスバー付近の権限設定でマイクを許可してください。";
@@ -1816,6 +2159,10 @@ function getMicrophoneErrorMessage(error: Error) {
 
   if (error.name === "NotReadableError" || error.name === "TrackStartError") {
     return "マイクを開始できませんでした。他のアプリがマイクを使用していないか確認してください。";
+  }
+
+  if (error.name === "OverconstrainedError") {
+    return "選択したマイクを開始できませんでした。入力マイクを再読み込みして、DJI Mic Miniまたはシステム既定のマイクを選び直してください。";
   }
 
   return `マイクを開始できませんでした: ${error.message}`;
@@ -2206,6 +2553,14 @@ function isSilentRecording(stats: AudioStats) {
   if (stats.durationSeconds < silenceThresholds.minDuration) return true;
   if (stats.peak < silenceThresholds.peak) return true;
   return stats.rms < silenceThresholds.rms && stats.speechRatio < silenceThresholds.speechRatio;
+}
+
+function getAudioLevelPercent(stats: AudioStats | null) {
+  if (!stats) return 0;
+  const scaledPeak = stats.peak * 180;
+  const scaledRms = stats.rms * 520;
+  const percent = Math.max(scaledPeak, scaledRms) * 100;
+  return Math.max(0, Math.min(100, Math.round(percent)));
 }
 
 function getPublicNumberEnv(key: string, fallback: number) {
