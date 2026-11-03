@@ -1086,3 +1086,36 @@
 ### 承認・確認待ち
 - PR #1 の修正の再レビュー（Claude Code）と、push・マージの判断（利用者）。
 - PR #2（CLAUDE.md の整理）のマージ判断（Claude Code 承認済み）。
+
+## 2026-11-03 PR #1・#2 のマージと片付け
+
+### 作業内容
+- PR #2（CLAUDE.md の整理）を `3a1412623520a21f4e0887fc4dda525f78b0e3a6`、PR #1（dev-log の整理）を `dd91c10a19d37bc88fa32a5ddaf3b585c699c13c` で main へマージした。承認した head に固定した、通常のマージコミット。
+- Vercel: PR #2 のマージコミットでは `dental-translation-app-l35c` のデプロイが「Canceled from the Vercel Dashboard」で取り消されたが、続く PR #1 のマージコミットでは2プロジェクトとも成功した。
+- ローカルの `main` を `origin/main` へ早送りし、中身がすべて main に入ったローカルブランチ `fix/pr1-dev-log-order` と `docs/update-dev-log`（`d5907ee`）を消した。
+
+### 確認方法
+- ステージした main との差分は docs/dev-log.md だけで削除0行。既存本文は作業コピーとGit内でそれぞれバイト単位で一致した。
+- ステージした開発ログは UTF-8 BOM 付きのLFで、CRは0件。
+- 朝礼パーサーにインデックスの内容を渡し、同日付の後ろのブロックが選ばれ、次のアクション2件・承認待ち1件であることを確認した。
+- npm.cmd test は5ファイル・12テスト成功。git diff --check も成功した。
+
+## 2026-11-03 朝礼反映
+
+### 現在の状態
+- PR #1・#2 を main へマージ済み（`dd91c10`）。CLAUDE.md は正本へ案内する入口になり、dev-log の朝礼反映は日付順に並んでいる。
+
+### 完了
+- 前回の次のアクションは未着手
+- 済: PR #1 の修正の再レビュー（Claude Code）と、push・マージの判断（利用者）。（Claude Code が head `4b7319e` を確認、`dd91c10` でマージ）
+- 済: PR #2（CLAUDE.md の整理）のマージ判断（Claude Code 承認済み）。（`3a14126` でマージ）
+
+### 次のアクション
+- 録音中プレビューの遅延を実機で確認し、必要に応じて調整する。
+- プロジェクトの `AGENTS.md` に残る古い説明（存在しない `1_Specs`・`3_Logs` への案内）を、CLAUDE.md と同じく正本へ案内する形に整理する。
+
+### 条件付き・保留
+- Web Speech API／Realtime API／Live APIの比較は従来どおり保留。
+
+### 承認・確認待ち
+- この記録を入れたPRのレビューとマージ。
